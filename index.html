@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeeDev Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS for additional styling -->
+    <style>
+        :root {
+            --primary-color: #000125;
+            --gradient-start: #7190ff;
+            --gradient-end: #02d5ce;
+            --accent-color: #17a6ff;
+        }
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(6, 201, 255, 0.3);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            bottom: -10px;
+            left: 20%;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border-radius: 2px;
+        }
+
+        .portfolio-filter {
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-filter.active {
+            background: rgba(113, 144, 255, 0.2);
+            border: 1px solid rgba(113, 144, 255, 0.5);
+        }
+
+        .project-card {
+            transition: all 0.4s ease;
+            display: block; /* Default untuk semua card */
+        }
+
+        .project-card.hidden-card {
+            display: none !important; /* Untuk menyembunyikan card tambahan */
+        }
+
+        .project-card:hover {
+            transform: scale(1.05);
+        }
+
+        .hero-image {
+            filter: drop-shadow(0 20px 30px rgba(6, 201, 255, 0.4));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .skill-badge {
+            transition: all 0.3s ease;
+        }
+
+        .skill-badge:hover {
+            transform: scale(1.1);
+        }
+
+        .contact-icon {
+            transition: all 0.3s ease;
+        }
+
+        .contact-icon:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 1, 37, 0.8);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body class="relative">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect py-4 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold">Zee<span class="gradient-text">Dev</span></h1>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-white font-medium hover:text-gray-300">Home</a>
+                <a href="#about" class="nav-link text-white font-medium hover:text-gray-300">About</a>
+                <a href="#portfolio" class="nav-link text-white font-medium hover:text-gray-300">Portfolio</a>
+                <a href="#contact" class="nav-link text-white font-medium hover:text-gray-300">Contact</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="menu-toggle" class="text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4">
+            <div class="flex flex-col space-y-4">
+                <a href="#home" class="nav-link text-white font-medium hover:text-gray-300 py-2">Home</a>
+                <a href="#about" class="nav-link text-white font-medium hover:text-gray-300 py-2">About</a>
+                <a href="#portfolio" class="nav-link text-white font-medium hover:text-gray-300 py-2">Portfolio</a>
+                <a href="#contact" class="nav-link text-white font-medium hover:text-gray-300 py-2">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row items-center justify-between">
+                <div class="lg:w-1/2 mb-12 lg:mb-0" data-aos="fade-right" data-aos-duration="1000">
+                    <p class="text-lg mb-2 text-cyan-400" id="simpleUsage">FULLSTACK DEVELOPER</p>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                        Software <span class="gradient-text">Engineering</span><br>
+                        SMK Telkom MLG Student
+                    </h1>
+                    <p class="text-gray-300 mb-8">
+                        <span>Rekayasa Perangkat Lunak</span> - Transforming ideas into digital experiences
+                    </p>
+
+                    <!-- Social Icons -->
+                    <div class="flex space-x-4 mb-8">
+                        <a href="https://www.instagram.com/_elzdne?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                            target="_blank"
+                            class="contact-icon w-10 h-10 rounded-full glass-effect flex items-center justify-center">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a href="https://github.com/elzidane" target="_blank"
+                            class="contact-icon w-10 h-10 rounded-full glass-effect flex items-center justify-center">
+                            <i class="fab fa-github text-lg"></i>
+                        </a>
+                        <a href="#"
+                            class="contact-icon w-10 h-10 rounded-full glass-effect flex items-center justify-center">
+                            <i class="fab fa-linkedin-in text-lg"></i>
+                        </a>
+                        <a href="#"
+                            class="contact-icon w-10 h-10 rounded-full glass-effect flex items-center justify-center">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                    </div>
+
+                    <!-- Skills Badges -->
+                    <div class="flex flex-wrap gap-3 mb-8">
+                        <span class="skill-badge glass-effect px-4 py-2 rounded-full text-sm">Java</span>
+                        <span class="skill-badge glass-effect px-4 py-2 rounded-full text-sm">HTML/CSS</span>
+                        <span class="skill-badge glass-effect px-4 py-2 rounded-full text-sm">JavaScript</span>
+                        <span class="skill-badge glass-effect px-4 py-2 rounded-full text-sm">Figma</span>
+                        <span class="skill-badge glass-effect px-4 py-2 rounded-full text-sm">Tailwind CSS</span>
+                        <span class="skill-badge glass-effect px-4 py-2 rounded-full text-sm">Flutter</span>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex space-x-4">
+                        <a href="#portfolio">
+                            <button
+                                class="gradient-bg text-white font-medium py-3 px-6 rounded-full hover:opacity-90 transition">
+                                View Projects
+                            </button>
+                        </a>
+                        <button id="download-cv"
+                            class="glass-effect text-white font-medium py-3 px-6 rounded-full hover:bg-opacity-50 transition">
+                            Download CV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Image -->
+                <div class="lg:w-1/2 flex justify-center" data-aos="fade-left" data-aos-duration="1000"
+                    data-aos-delay="300">
+                    <div class="relative">
+                        <div class="hero-image">
+                            <img src="asset/zidan.JPG" alt="Developer Illustration" class="rounded-2xl w-full max-w-lg">
+                        </div>
+                        <div class="absolute -bottom-5 -right-5 w-24 h-24 gradient-bg rounded-2xl -z-10"></div>
+                        <div class="absolute -top-5 -left-5 w-20 h-20 gradient-bg rounded-full -z-10 opacity-70"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl font-bold text-center mb-16">About <span
+                    class="gradient-text">Me</span></h2>
+
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+                <!-- About Image -->
+                <div class="lg:w-2/5" data-aos="fade-right" data-aos-duration="1000">
+                    <div class="relative">
+                        <img src="asset/foto1.jpg" alt="Profile Photo" class="rounded-2xl w-full">
+                        <div class="absolute -bottom-5 -right-5 w-32 h-32 gradient-bg rounded-2xl -z-10"></div>
+                    </div>
+                </div>
+
+                <!-- About Content -->
+                <div class="lg:w-3/5" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+                    <h3 class="text-3xl font-bold mb-6">
+                        Hello, I'm <span class="gradient-text">EL Zidane Ardyansyah</span>
+                    </h3>
+
+                    <p class="text-gray-300 mb-8 leading-relaxed">
+                        Seorang siswa SMK Telkom Malang dengan Jurusan (RPL) Rekayasa Perangkat Lunak yang tertarik
+                        dalam bidang FullStack Dev dan UI/UX Designer. Saya berfokus untuk menciptakan pengalaman
+                        digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek.
+                    </p>
+
+                    <p class="text-gray-300 mb-10 leading-relaxed">
+                        Dengan pengalaman selama 1+ tahun dalam pengembangan web dan desain antarmuka, saya telah
+                        mengerjakan berbagai proyek mulai dari website portofolio, aplikasi mobile, hingga sistem
+                        manajemen. Saya selalu bersemangat untuk mempelajari teknologi baru dan menerapkannya dalam
+                        proyek nyata.
+                    </p>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="card-hover glass-effect p-6 rounded-2xl">
+                            <div class="text-3xl font-bold gradient-text mb-2">10+</div>
+                            <h4 class="font-medium">Projects Completed</h4>
+                            <p class="text-sm text-gray-400 mt-2">Web, Mobile & UI/UX Design</p>
+                        </div>
+
+                        <div class="card-hover glass-effect p-6 rounded-2xl">
+                            <div class="text-3xl font-bold gradient-text mb-2">2+</div>
+                            <h4 class="font-medium">Certificates</h4>
+                            <p class="text-sm text-gray-400 mt-2">From recognized institutions</p>
+                        </div>
+
+                        <div class="card-hover glass-effect p-6 rounded-2xl">
+                            <div class="text-3xl font-bold gradient-text mb-2">1+</div>
+                            <h4 class="font-medium">Years Experience</h4>
+                            <p class="text-sm text-gray-400 mt-2">In software development</p>
+                        </div>
+                    </div>
+
+                    <button id="view-all-projects-btn"
+                        class="gradient-bg text-white font-medium py-3 px-8 rounded-full hover:opacity-90 transition">
+                        View All Projects
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-20 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl font-bold text-center mb-16">Portfolio <span
+                    class="gradient-text">Showcase</span></h2>
+            <p class="text-center text-gray-300 mb-12 max-w-2xl mx-auto">Explore my journey through projects,
+                certificates, and technical expertise. Click on the filters to see different categories.</p>
+
+            <!-- Portfolio Filters -->
+            <div class="flex justify-center flex-wrap gap-4 mb-12">
+                <button id="filter-all"
+                    class="portfolio-filter active glass-effect text-white font-medium py-3 px-6 rounded-full">
+                    All Projects
+                </button>
+                <button id="filter-web"
+                    class="portfolio-filter glass-effect text-white font-medium py-3 px-6 rounded-full">
+                    Web Development
+                </button>
+                <button id="filter-uiux"
+                    class="portfolio-filter glass-effect text-white font-medium py-3 px-6 rounded-full">
+                    UI/UX Design
+                </button>
+                <button id="filter-cert"
+                    class="portfolio-filter glass-effect text-white font-medium py-3 px-6 rounded-full">
+                    Certificates
+                </button>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="project-card portfolio-item web" data-category="web">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="asset/port.png" alt="Web Portfolio Project" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Personal Portfolio Website</h3>
+                            <p class="text-gray-300 mb-4">Website portofolio pribadi dengan menggunakan bahasa html css
+                                js dan tailwind, dibuat agar orang mengetahui potensi diri</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">Web Development</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Project →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="project-card portfolio-item web" data-category="web">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="asset/Dashboard Situ.png" alt="Web Portfolio Project"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Web Sistem Informasi TataUsaha</h3>
+                            <p class="text-gray-300 mb-4">Web SITU, project dari sekolah Smk Telkom Malang untung
+                                TataUsaha agar gampang menganalisisnya</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">Web Development</span>
+                                <a href="https://dashboard-situ.vercel.app/" target="_blank"
+                                    class="text-cyan-400 hover:text-cyan-300">View Project →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Project 3 -->
+                <div class="project-card portfolio-item web" data-category="web">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="asset/webkunjungan1.png" alt="Dashboard Project"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Web Kunjungan SMK Telkom Malang</h3>
+                            <p class="text-gray-300 mb-4">Website SMK TELKOM MALANG untuk pendaftaran kunjungan
+                                eksternal</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">Web Development</span>
+                                <a href="https://moklet-visit.vercel.app/" target="_blank"
+                                    class="text-cyan-400 hover:text-cyan-300">View Project →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card portfolio-item uiux" data-category="uiux">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="asset/UIUX PETSHOP MOBILE APP.png" alt="UI/UX Design Project"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">PetShop Mobile App UI/UX</h3>
+                            <p class="text-gray-300 mb-4">Mobile application design for a pet shop with user-friendly
+                                interface and intuitive navigation.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">UI/UX Design</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Design →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card portfolio-item uiux" data-category="uiux">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="asset/Login page situ.png" alt="UI/UX Design Project"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Ui/Ux Website SITU</h3>
+                            <p class="text-gray-300 mb-4">Design website situ user-friendly dan terdapat fitur ai nya
+                            </p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">UI/UX Design</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Design →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Project 4 - Certificate -->
+                <div class="project-card portfolio-item cert" data-category="cert">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                alt="Certificate" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Frontend Development Certification</h3>
+                            <p class="text-gray-300 mb-4">Certification in advanced HTML, CSS, and JavaScript from a
+                                recognized institution.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">Certificate</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Certificate →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project tambahan (akan disembunyikan awalnya) -->
+                <div class="project-card portfolio-item web hidden-card" data-category="web">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                alt="E-commerce UI" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">E-commerce Website UI Design</h3>
+                            <p class="text-gray-300 mb-4">Modern and responsive e-commerce website design with focus on
+                                user experience.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">UI/UX Design</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Design →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6 - Certificate -->
+                <div class="project-card portfolio-item cert hidden-card" data-category="cert">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                alt="Certificate" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">UI/UX Design Mastery</h3>
+                            <p class="text-gray-300 mb-4">Comprehensive UI/UX design certification covering research,
+                                wireframing, and prototyping.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">Certificate</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Certificate →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project tambahan lainnya -->
+                <div class="project-card portfolio-item web hidden-card" data-category="web">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                alt="Dashboard Project" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Admin Dashboard System</h3>
+                            <p class="text-gray-300 mb-4">A comprehensive admin dashboard with data visualization and
+                                management features.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">Web Development</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Project →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project tambahan lainnya -->
+                <div class="project-card portfolio-item uiux hidden-card" data-category="uiux">
+                    <div class="glass-effect rounded-2xl overflow-hidden h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1558655146-364adaf1fcc9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                alt="UI/UX Design Project" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Mobile Banking App Design</h3>
+                            <p class="text-gray-300 mb-4">Modern mobile banking application with secure and intuitive
+                                design.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm gradient-text font-medium">UI/UX Design</span>
+                                <a href="#" class="text-cyan-400 hover:text-cyan-300">View Design →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View More Button -->
+            <div class="text-center mt-12">
+                <button id="view-more-btn"
+                    class="gradient-bg text-white font-medium py-3 px-8 rounded-full hover:opacity-90 transition">
+                    <span id="view-more-text">View More Projects</span>
+                    <i id="view-more-icon" class="fas fa-chevron-down ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="py-20 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl font-bold text-center mb-16">Tech <span
+                    class="gradient-text">Stack</span></h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+                <!-- Tech Item 1 -->
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <i class="fab fa-html5 text-4xl text-white"></i>
+                    </div>
+                    <h3 class="font-medium">HTML5</h3>
+                </div>
+
+                <!-- Tech Item 2 -->
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <i class="fab fa-css3-alt text-4xl text-white"></i>
+                    </div>
+                    <h3 class="font-medium">CSS3</h3>
+                </div>
+
+                <!-- Tech Item 3 -->
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <i class="fab fa-js text-4xl text-white"></i>
+                    </div>
+                    <h3 class="font-medium">JavaScript</h3>
+                </div>
+
+                <!-- Tech Item 4 -->
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <i class="fab fa-java text-4xl text-white"></i>
+                    </div>
+                    <h3 class="font-medium">Java</h3>
+                </div>
+
+                <!-- Tech Item 5 -->
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <i class="fab fa-figma text-4xl text-white"></i>
+                    </div>
+                    <h3 class="font-medium">Figma</h3>
+                </div>
+
+                <!-- Tech Item 6 -->
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <i class="fab fa-git-alt text-4xl text-white"></i>
+                    </div>
+                    <h3 class="font-medium">Git</h3>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                d="M6.746 14.856L3.866 12l9.307-9.308h5.737zm6.427 6.452l-5.021-5.021l5.021-5.002h5.737l-5.021 5.002l5.02 5.02z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-medium">Flutter</h3>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                d="M6.746 14.856L3.866 12l9.307-9.308h5.737zm6.427 6.452l-5.021-5.021l5.021-5.002h5.737l-5.021 5.002l5.02 5.02z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-medium">Dart</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl font-bold text-center mb-16">Get In <span
+                    class="gradient-text">Touch</span></h2>
+
+            <div class="flex flex-col lg:flex-row gap-12">
+                <!-- Contact Info -->
+                <div class="lg:w-1/2" data-aos="fade-right" data-aos-duration="1000">
+                    <h3 class="text-2xl font-bold mb-6">Let's Work Together!</h3>
+                    <p class="text-gray-300 mb-8 leading-relaxed">
+                        I'm currently open to freelance opportunities, internships, or any interesting project
+                        collaborations. Feel free to reach out if you have a project in mind or just want to connect!
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Email</h4>
+                                <p class="text-gray-300">elzidaneardyansyah265@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Location</h4>
+                                <p class="text-gray-300">Malang, Indonesia</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Phone</h4>
+                                <p class="text-gray-300">+62 877 9273 5999</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="mt-10">
+                        <h4 class="font-medium mb-4">Follow Me</h4>
+                        <div class="flex space-x-4">
+                            <a href="https://www.instagram.com/_elzdne?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                                target="_blank"
+                                class="contact-icon w-12 h-12 rounded-full glass-effect flex items-center justify-center">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                            <a href="https://github.com/elzidane" target="_blank"
+                                class="contact-icon w-12 h-12 rounded-full glass-effect flex items-center justify-center">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                            <a href="#"
+                                class="contact-icon w-12 h-12 rounded-full glass-effect flex items-center justify-center">
+                                <i class="fab fa-linkedin-in text-xl"></i>
+                            </a>
+                            <a href="#"
+                                class="contact-icon w-12 h-12 rounded-full glass-effect flex items-center justify-center">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="lg:w-1/2" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+                    <div class="glass-effect p-8 rounded-2xl">
+                        <form id="contact-form">
+                            <div class="mb-6">
+                                <label for="name" class="block mb-2">Your Name</label>
+                                <input type="text" id="name"
+                                    class="w-full bg-transparent border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:border-cyan-400"
+                                    placeholder="Enter your name">
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="email" class="block mb-2">Your Email</label>
+                                <input type="email" id="email"
+                                    class="w-full bg-transparent border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:border-cyan-400"
+                                    placeholder="Enter your email">
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="subject" class="block mb-2">Subject</label>
+                                <input type="text" id="subject"
+                                    class="w-full bg-transparent border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:border-cyan-400"
+                                    placeholder="Enter subject">
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="message" class="block mb-2">Message</label>
+                                <textarea id="message" rows="5"
+                                    class="w-full bg-transparent border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:border-cyan-400"
+                                    placeholder="Enter your message"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="gradient-bg text-white font-medium py-3 px-8 rounded-full w-full hover:opacity-90 transition">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 md:px-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-2xl font-bold">Zee<span class="gradient-text">Dev</span></h1>
+                    <p class="text-gray-400 text-sm mt-2">Fullstack Developer & UI/UX Designer</p>
+                </div>
+
+                <div class="text-center md:text-right">
+                    <p class="text-gray-400">© 2023 ZeeDev. All rights reserved.</p>
+                    <p class="text-gray-400 text-sm mt-1">Made with ❤️ by EL Zidane Ardyansyah</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top"
+        class="fixed bottom-8 right-8 w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white shadow-lg hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            // Change icon based on menu state
+            const icon = menuToggle.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuToggle.querySelector('i').classList.remove('fa-times');
+                menuToggle.querySelector('i').classList.add('fa-bars');
+            });
+        });
+
+        // Portfolio Filtering and Show More/Less functionality
+        const filterButtons = document.querySelectorAll('.portfolio-filter');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+        const viewMoreBtn = document.getElementById('view-more-btn');
+        const viewMoreText = document.getElementById('view-more-text');
+        const viewMoreIcon = document.getElementById('view-more-icon');
+        const viewAllProjectsBtn = document.getElementById('view-all-projects-btn');
+        const downloadCvBtn = document.getElementById('download-cv');
+
+        let isShowingAll = false;
+        let currentFilter = 'all';
+
+        // Fungsi untuk mengatur tampilan project berdasarkan filter dan batas 6
+        function updatePortfolioDisplay() {
+            let visibleCount = 0;
+            const maxInitial = 6;
+            
+            portfolioItems.forEach(item => {
+                // Reset semua item ke hidden terlebih dahulu
+                item.style.display = 'none';
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                // Cek apakah item sesuai dengan filter
+                const matchesFilter = currentFilter === 'all' || item.dataset.category === currentFilter;
+                
+                if (matchesFilter) {
+                    // Tampilkan item jika:
+                    // 1. Sedang menampilkan semua project (isShowingAll = true), atau
+                    // 2. Masih dalam batas 6 project pertama (visibleCount < maxInitial)
+                    if (isShowingAll || visibleCount < maxInitial) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 10);
+                        visibleCount++;
+                    }
+                }
+            });
+            
+            // Tampilkan atau sembunyikan tombol View More berdasarkan jumlah project
+            const totalMatchingItems = Array.from(portfolioItems).filter(item => 
+                currentFilter === 'all' || item.dataset.category === currentFilter
+            ).length;
+            
+            if (totalMatchingItems > maxInitial && !isShowingAll) {
+                viewMoreBtn.style.display = 'block';
+                viewMoreText.textContent = 'View More Projects';
+                viewMoreIcon.className = 'fas fa-chevron-down ml-2';
+            } else if (isShowingAll && totalMatchingItems > maxInitial) {
+                viewMoreBtn.style.display = 'block';
+                viewMoreText.textContent = 'View Less Projects';
+                viewMoreIcon.className = 'fas fa-chevron-up ml-2';
+            } else {
+                viewMoreBtn.style.display = 'none';
+            }
+        }
+
+        // Event listener untuk filter buttons
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Reset ke tampilan awal (hanya 6 project) saat filter berubah
+                isShowingAll = false;
+                
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                currentFilter = button.id.replace('filter-', '');
+                updatePortfolioDisplay();
+            });
+        });
+
+        // Event listener untuk tombol View More/Less
+        viewMoreBtn.addEventListener('click', () => {
+            isShowingAll = !isShowingAll;
+            updatePortfolioDisplay();
+            
+            // Scroll ke portfolio section jika menampilkan semua project
+            if (isShowingAll) {
+                document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Event listener untuk tombol View All Projects di About section
+        if (viewAllProjectsBtn) {
+            viewAllProjectsBtn.addEventListener('click', () => {
+                // Set filter ke all dan tampilkan semua project
+                isShowingAll = true;
+                currentFilter = 'all';
+                
+                // Update filter button active state
+                filterButtons.forEach(btn => {
+                    if (btn.id === 'filter-all') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                updatePortfolioDisplay();
+                
+                // Scroll ke portfolio section
+                document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        // Event listener untuk tombol Download CV
+        if (downloadCvBtn) {
+            downloadCvBtn.addEventListener('click', () => {
+                // Ganti dengan URL CV Anda
+                const cvUrl = 'path/to/your/cv.pdf';
+                
+                // Buat element link untuk download
+                const link = document.createElement('a');
+                link.href = cvUrl;
+                link.download = 'ZeeDev_CV.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Atau tampilkan pesan jika CV belum tersedia
+                // alert('CV akan segera tersedia untuk diunduh!');
+            });
+        }
+
+        // Inisialisasi tampilan awal
+        updatePortfolioDisplay();
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Contact Form Submission
+        const contactForm = document.getElementById('contact-form');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Validasi sederhana
+            if (!name || !email || !message) {
+                alert('Please fill in all required fields!');
+                return;
+            }
+
+            // In a real application, you would send this data to a server
+            // For now, just show an alert
+            alert(`Thank you, ${name}! Your message has been sent. I'll get back to you soon!`);
+
+            // Reset form
+            contactForm.reset();
+        });
+
+        // TypeIt Animation for Hero Section
+        new TypeIt("#simpleUsage", {
+            strings: ["FULLSTACK DEVELOPER", "MOBILE APP DEVELOPER", "UI/UX DESIGNER", "SOFTWARE ENGINEER"],
+            speed: 100,
+            breakLines: false,
+            loop: true,
+            waitUntilVisible: true,
+        }).go();
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
