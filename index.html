@@ -198,12 +198,21 @@
         .stat-num { font-family: var(--font-head); font-size:2rem; font-weight:800; color:var(--text); }
         .stat-label { font-size:0.8rem; color: var(--muted); margin-top:0.2rem; }
 
-        /* Hero Image side */
-        .hero-image-side { position:relative; display:flex; justify-content:center; }
+        /* Hero Image side with 3D Mouse Parallax */
+        .hero-image-side {
+            position:relative; display:flex; justify-content:center;
+            transform-style: preserve-3d;
+            perspective: 1200px;
+            will-change: transform;
+        }
         .hero-img-frame {
             position:relative; width: 360px; height:420px;
             border-radius: 24px; overflow:hidden;
             border: 1px solid var(--border-hi);
+            transform-style: preserve-3d;
+            transform: translateZ(20px);
+            will-change: transform;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .hero-img-frame img { width:100%; height:100%; object-fit:cover; }
         .hero-img-frame::before {
@@ -216,21 +225,47 @@
             background: rgba(8,9,13,0.85); backdrop-filter:blur(12px);
             border:1px solid var(--border-hi); border-radius:100px;
             padding:0.5rem 1rem; font-size:0.78rem; z-index:2;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .badge-top { top:-12px; right:-20px; }
-        .badge-bottom { bottom:-12px; left:-20px; }
+        .badge-top { top:-12px; right:-20px; transform: translateZ(50px) translateX(10px) translateY(-5px); }
+        .badge-bottom { bottom:-12px; left:-20px; transform: translateZ(40px) translateX(-10px) translateY(5px); }
         .badge-dot { width:7px; height:7px; border-radius:50%; background:var(--accent-2); animation: blink 1.5s infinite; }
         .floating-tech {
             position:absolute; width:48px; height:48px;
             background: var(--bg-2); border:1px solid var(--border-hi);
             border-radius:12px; display:flex; align-items:center; justify-content:center;
             font-size:1.4rem; z-index:3;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .ft-1 { top:20%; right:-28px; transform: translateZ(60px) rotate(-10deg); }
+        .ft-2 { bottom:28%; left:-28px; transform: translateZ(80px) rotate(15deg); }
+        .ft-3 { top:55%; right:-28px; transform: translateZ(50px) rotate(5deg); }
+        .float-inner {
+            display:flex; align-items:center; justify-content:center; width:100%; height:100%;
             animation: floatY 4s ease-in-out infinite;
         }
-        .ft-1 { top:20%; right:-28px; animation-delay: 0s; }
-        .ft-2 { bottom:28%; left:-28px; animation-delay: 1.2s; }
-        .ft-3 { top:55%; right:-28px; animation-delay: 2.4s; }
         @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+        /* ─── PARALLAX BACKGROUND TEXT ───────────────────────────── */
+        .bg-text-parallax {
+            position: absolute;
+            font-family: var(--font-head);
+            font-size: clamp(5rem, 13vw, 11rem);
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.015);
+            text-stroke: 1px rgba(255, 255, 255, 0.015);
+            user-select: none;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: -1;
+            text-transform: uppercase;
+            will-change: transform;
+        }
 
         /* ─── SECTIONS SHARED ────────────────────────────────────── */
         section { padding: 6rem 4rem; }
@@ -280,19 +315,37 @@
         /* ─── PORTFOLIO ──────────────────────────────────────────── */
         #portfolio { background: linear-gradient(to bottom, transparent, rgba(91,127,255,0.02), transparent); }
         .projects-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+        
         .project-card {
             background: var(--bg-card); border:1px solid var(--border);
-            border-radius:16px; overflow:hidden; transition: all 0.35s ease;
+            border-radius:16px; overflow:hidden;
             position:relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            will-change: transform;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .project-card:hover { border-color: var(--border-hi); transform:translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(91,127,255,0.1); }
-        .project-img { position:relative; height:200px; overflow:hidden; }
-        .project-img img { width:100%; height:100%; object-fit:cover; transition: transform 0.5s ease; }
-        .project-card:hover .project-img img { transform: scale(1.06); }
+        .project-card:hover { 
+            border-color: var(--border-hi); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(91,127,255,0.1); 
+        }
+        
+        .project-img { 
+            position:relative; height:200px; overflow:hidden; 
+            transform: translateZ(15px);
+        }
+        .project-img img { 
+            width:100%; height:125%; object-fit:cover; 
+            position: absolute; top: -12%; left: 0;
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+        }
+        
         .project-img-overlay {
             position:absolute; inset:0; background: rgba(8,9,13,0.5);
             display:flex; align-items:center; justify-content:center; gap:0.75rem;
             opacity:0; transition: opacity 0.3s;
+            z-index: 6;
         }
         .project-card:hover .project-img-overlay { opacity:1; }
         .project-link-btn {
@@ -308,8 +361,12 @@
             background: rgba(8,9,13,0.75); backdrop-filter:blur(8px);
             border:1px solid var(--border-hi); padding:0.25rem 0.6rem; border-radius:4px;
             color: var(--accent-2);
+            z-index: 6;
         }
-        .project-body { padding:1.5rem; }
+        .project-body { 
+            padding:1.5rem; 
+            transform: translateZ(10px);
+        }
         .project-body h3 { font-family: var(--font-head); font-size:1.05rem; font-weight:700; margin-bottom:0.5rem; }
         .project-body p { font-size:0.85rem; color: var(--muted); line-height:1.6; margin-bottom:1.2rem; }
         .tech-pills { display:flex; flex-wrap:wrap; gap:0.4rem; }
@@ -320,23 +377,61 @@
             color: var(--accent);
         }
 
+        /* Glare Reflection overlay */
+        .card-glare {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.08) 0%, transparent 60%);
+            z-index: 10;
+            mix-blend-mode: overlay;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            will-change: background, opacity;
+        }
+        .project-card:hover .card-glare, .skill-card:hover .card-glare {
+            opacity: 1;
+        }
+
         /* ─── SKILLS ─────────────────────────────────────────────── */
         .skills-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap:1rem; }
+        
         .skill-card {
             background: var(--bg-card); border:1px solid var(--border);
             border-radius:12px; padding:1.5rem 1rem; text-align:center;
-            transition: all 0.3s; position:relative; overflow:hidden;
+            position:relative; overflow:hidden;
+            transform-style: preserve-3d;
+            perspective: 800px;
+            will-change: transform;
+            transition: border-color 0.3s;
         }
         .skill-card::before {
             content:''; position:absolute; inset:0;
             background: radial-gradient(circle at 50% 0%, rgba(91,127,255,0.08), transparent 70%);
             opacity:0; transition: opacity 0.3s;
+            z-index: 1;
         }
-        .skill-card:hover { border-color: var(--border-hi); transform:translateY(-4px); }
+        .skill-card:hover { border-color: var(--border-hi); }
         .skill-card:hover::before { opacity:1; }
-        .skill-icon { font-size:2rem; margin-bottom:0.75rem; }
-        .skill-name { font-family: var(--font-head); font-size:0.9rem; font-weight:700; margin-bottom:0.2rem; }
-        .skill-desc { font-size:0.72rem; color: var(--muted); }
+        .skill-icon { 
+            font-size:2rem; margin-bottom:0.75rem; 
+            transform: translateZ(20px);
+            z-index: 2;
+            position: relative;
+        }
+        .skill-name { 
+            font-family: var(--font-head); font-size:0.9rem; font-weight:700; margin-bottom:0.2rem; 
+            transform: translateZ(10px);
+            z-index: 2;
+            position: relative;
+        }
+        .skill-desc { 
+            font-size:0.72rem; color: var(--muted); 
+            transform: translateZ(5px);
+            z-index: 2;
+            position: relative;
+        }
 
         /* ─── EXPERIENCE / TIMELINE ──────────────────────────────── */
         #experience { }
@@ -526,8 +621,12 @@
 
     <!-- ─── HERO ──────────────────────────────────────────────── -->
     <section id="home">
-        <div class="hero-orb orb-1"></div>
-        <div class="hero-orb orb-2"></div>
+        <!-- Parallax Background Typography -->
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="-0.15" data-rotate="-4" style="top: 15%; left: 5%;">CREATIVE</div>
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="0.2" data-rotate="2" style="bottom: 10%; right: 5%; -webkit-text-stroke: 1px rgba(0, 229, 195, 0.02); text-stroke: 1px rgba(0, 229, 195, 0.02);">DEVELOPER</div>
+
+        <div class="hero-orb orb-1" data-parallax data-speed="-0.15"></div>
+        <div class="hero-orb orb-2" data-parallax data-speed="0.2"></div>
         <div class="hero-inner">
             <div class="hero-left">
                 <div class="hero-tag fade-in">
@@ -573,15 +672,19 @@
                         <span>Malang, Indonesia</span>
                     </div>
                 </div>
-                <div class="floating-tech ft-1"><i class="fab fa-react" style="color:#61dafb"></i></div>
-                <div class="floating-tech ft-2"><i class="fab fa-js" style="color:#f7df1e"></i></div>
-                <div class="floating-tech ft-3"><i class="fab fa-figma" style="color:#a259ff"></i></div>
+                <div class="floating-tech ft-1"><div class="float-inner" style="animation-delay: 0s;"><i class="fab fa-react" style="color:#61dafb"></i></div></div>
+                <div class="floating-tech ft-2"><div class="float-inner" style="animation-delay: 1.2s;"><i class="fab fa-js" style="color:#f7df1e"></i></div></div>
+                <div class="floating-tech ft-3"><div class="float-inner" style="animation-delay: 2.4s;"><i class="fab fa-figma" style="color:#a259ff"></i></div></div>
             </div>
         </div>
     </section>
 
     <!-- ─── ABOUT ─────────────────────────────────────────────── -->
-    <section id="about">
+    <section id="about" style="position: relative; overflow: hidden;">
+        <!-- Parallax Background Elements -->
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="0.15" data-rotate="3" style="top: 25%; left: -5%;">INNOVATION</div>
+        <div class="hero-orb" data-parallax data-speed="-0.12" style="width:400px; height:400px; background:rgba(91,127,255,0.04); top: 15%; right: 5%; filter:blur(130px); position:absolute; z-index:-1; border-radius:50%;"></div>
+
         <div class="section-inner">
             <div class="about-grid">
                 <div class="fade-in-l">
@@ -625,7 +728,11 @@
     </section>
 
     <!-- ─── PORTFOLIO ─────────────────────────────────────────── -->
-    <section id="portfolio">
+    <section id="portfolio" style="position: relative; overflow: hidden; background: linear-gradient(to bottom, transparent, rgba(91,127,255,0.02), transparent);">
+        <!-- Parallax Background Elements -->
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="-0.18" data-rotate="-2" style="top: 10%; right: -2%;">PORTFOLIO</div>
+        <div class="hero-orb" data-parallax data-speed="0.15" style="width:350px; height:350px; background:rgba(0,229,195,0.03); bottom: 10%; left: 5%; filter:blur(110px); position:absolute; z-index:-1; border-radius:50%;"></div>
+
         <div class="section-inner">
             <div class="section-header fade-in">
                 <div class="section-eyebrow">PORTOFOLIO</div>
@@ -636,8 +743,9 @@
             <div class="projects-grid">
                 <!-- Card 1 -->
                 <div class="project-card tilt-card fade-in" style="transition-delay:0.1s">
+                    <div class="card-glare"></div>
                     <div class="project-img">
-                        <img src="asset/port.png" alt="Portfolio">
+                        <img src="asset/port.png" alt="Portfolio" class="parallax-img">
                         <div class="project-img-overlay">
                             <a href="https://personal-portfolio-five-indol-45.vercel.app/" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
                         </div>
@@ -655,8 +763,9 @@
                 </div>
                 <!-- Card 2 -->
                 <div class="project-card tilt-card fade-in" style="transition-delay:0.2s">
+                    <div class="card-glare"></div>
                     <div class="project-img">
-                        <img src="asset/Dashboard Situ.png" alt="Dashboard SITU">
+                        <img src="asset/Dashboard Situ.png" alt="Dashboard SITU" class="parallax-img">
                         <div class="project-img-overlay">
                             <a href="https://dashboard-situ.vercel.app/" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
                         </div>
@@ -674,8 +783,9 @@
                 </div>
                 <!-- Card 3 -->
                 <div class="project-card tilt-card fade-in" style="transition-delay:0.3s">
+                    <div class="card-glare"></div>
                     <div class="project-img">
-                        <img src="asset/webkunjungan1.png" alt="School Visit">
+                        <img src="asset/webkunjungan1.png" alt="School Visit" class="parallax-img">
                         <div class="project-img-overlay">
                             <a href="https://moklet-visit.vercel.app/" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
                         </div>
@@ -696,7 +806,11 @@
     </section>
 
     <!-- ─── SKILLS ────────────────────────────────────────────── -->
-    <section id="skills">
+    <section id="skills" style="position: relative; overflow: hidden;">
+        <!-- Parallax Background Elements -->
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="0.12" data-rotate="1" style="top: 30%; left: 5%;">EXPERTISE</div>
+        <div class="hero-orb" data-parallax data-speed="-0.1" style="width:300px; height:300px; background:rgba(91,127,255,0.03); top: 20%; right: 10%; filter:blur(100px); position:absolute; z-index:-1; border-radius:50%;"></div>
+
         <div class="section-inner">
             <div class="section-header fade-in">
                 <div class="section-eyebrow">TECH STACK</div>
@@ -706,26 +820,31 @@
             </div>
             <div class="skills-grid">
                 <div class="skill-card fade-in" style="transition-delay:0.05s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-html5" style="color:#e34f26"></i></div>
                     <div class="skill-name">HTML5</div>
                     <div class="skill-desc">Semantic Markup</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.1s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-css3-alt" style="color:#1572b6"></i></div>
                     <div class="skill-name">CSS3</div>
                     <div class="skill-desc">Modern Styling</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.15s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-js" style="color:#f7df1e"></i></div>
                     <div class="skill-name">JavaScript</div>
                     <div class="skill-desc">ES6+</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.2s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-react" style="color:#61dafb"></i></div>
                     <div class="skill-name">React</div>
                     <div class="skill-desc">Frontend SPA</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.25s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon" style="color:#54c5f8">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M5.9 15.375L2.5 12l11-11h6.775zM13.5 23l-5.925-5.925L13.5 11.15h6.775l-5.925 5.925L20.275 23z"/></svg>
                     </div>
@@ -733,16 +852,19 @@
                     <div class="skill-desc">Mobile App</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.3s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-figma" style="color:#a259ff"></i></div>
                     <div class="skill-name">Figma</div>
                     <div class="skill-desc">UI/UX Design</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.35s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-node-js" style="color:#8cc84b"></i></div>
                     <div class="skill-name">Node.js</div>
                     <div class="skill-desc">Backend</div>
                 </div>
                 <div class="skill-card fade-in" style="transition-delay:0.4s">
+                    <div class="card-glare"></div>
                     <div class="skill-icon"><i class="fab fa-git-alt" style="color:#f05032"></i></div>
                     <div class="skill-name">Git</div>
                     <div class="skill-desc">Version Control</div>
@@ -752,7 +874,11 @@
     </section>
 
     <!-- ─── EXPERIENCE ────────────────────────────────────────── -->
-    <section id="experience">
+    <section id="experience" style="position: relative; overflow: hidden;">
+        <!-- Parallax Background Elements -->
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="-0.15" data-rotate="-3" style="top: 25%; right: 2%;">TIMELINE</div>
+        <div class="hero-orb" data-parallax data-speed="0.1" style="width:400px; height:400px; background:rgba(0,229,195,0.03); bottom: 15%; left: 10%; filter:blur(120px); position:absolute; z-index:-1; border-radius:50%;"></div>
+
         <div class="section-inner">
             <div class="section-header fade-in">
                 <div class="section-eyebrow">PERJALANAN</div>
@@ -794,7 +920,11 @@
     </section>
 
     <!-- ─── CONTACT ───────────────────────────────────────────── -->
-    <section id="contact">
+    <section id="contact" style="position: relative; overflow: hidden; background: linear-gradient(to bottom, transparent, rgba(0,229,195,0.02), transparent);">
+        <!-- Parallax Background Elements -->
+        <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="0.16" data-rotate="2" style="top: 15%; left: -2%;">COLLABORATE</div>
+        <div class="hero-orb" data-parallax data-speed="-0.12" style="width:350px; height:350px; background:rgba(91,127,255,0.04); top: 10%; right: 5%; filter:blur(100px); position:absolute; z-index:-1; border-radius:50%;"></div>
+
         <div class="section-inner">
             <div class="section-header fade-in">
                 <div class="section-eyebrow">KONTAK</div>
@@ -954,8 +1084,226 @@
     function type(){if(!tw)return;if(del){tw.textContent=words[wi].substring(0,ci--);if(ci<0){del=false;wi=(wi+1)%words.length;setTimeout(type,400);return;}}else{tw.textContent=words[wi].substring(0,ci++);if(ci>words[wi].length){del=true;setTimeout(type,2000);return;}}setTimeout(type,del?60:100);}
     setTimeout(type,1500);
 
-    /* ── 3D TILT ─────────────────────────────────────────────── */
-    document.querySelectorAll('.tilt-card').forEach(card=>{card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5;const y=(e.clientY-r.top)/r.height-0.5;card.style.transform=`perspective(600px) rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-6px)`;});card.addEventListener('mouseleave',()=>{card.style.transform='';});});
+    /* ── ADVANCED PARALLAX & PHYSICAL INTERACTIONS ENGINE ───── */
+    
+    // Core state coordinates
+    let currentScrollY = window.scrollY;
+    let interpolatedScrollY = window.scrollY;
+    const lerpFactor = 0.08; // 8% damping speed
+
+    // Mouse coordinates relative to viewport
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let targetGridX = 0;
+    let targetGridY = 0;
+    let currentGridX = 0;
+    let currentGridY = 0;
+
+    // Track scroll
+    window.addEventListener('scroll', () => {
+        currentScrollY = window.scrollY;
+    });
+
+    // Track mouse coordinates for grid background and magnetic items
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // Grid background shift scale
+        targetGridX = (mouseX / window.innerWidth - 0.5) * -20; // range: -10px to 10px
+        targetGridY = (mouseY / window.innerHeight - 0.5) * -20;
+    });
+
+    // Cache elements
+    const parallaxElems = document.querySelectorAll('[data-parallax]');
+    const projectImages = document.querySelectorAll('.parallax-img');
+    const gridBg = document.querySelector('.grid-bg');
+    
+    // Lerped Scroll + Grid Animation Loop
+    function animationLoop() {
+        // 1. Lerped Scroll calculation
+        interpolatedScrollY += (currentScrollY - interpolatedScrollY) * lerpFactor;
+        
+        // 2. Update scroll-driven parallax items
+        const viewportCenter = window.innerHeight / 2;
+        parallaxElems.forEach(el => {
+            const speed = parseFloat(el.getAttribute('data-speed')) || 0.1;
+            const dir = el.getAttribute('data-parallax-dir') || 'y';
+            const rotate = el.getAttribute('data-rotate') || '0';
+            const parent = el.closest('section') || el.parentElement;
+            const rect = parent.getBoundingClientRect();
+            
+            // Recalculate relative offset using our interpolated scroll position
+            const parentRelativeTop = rect.top + window.scrollY - interpolatedScrollY;
+            const parentCenter = parentRelativeTop + rect.height / 2;
+            const distanceFromCenter = parentCenter - viewportCenter;
+            
+            const offset = distanceFromCenter * speed;
+            
+            if (dir === 'x') {
+                el.style.transform = `translate3d(${offset}px, 0, 0) rotate(${rotate}deg)`;
+            } else {
+                el.style.transform = `translate3d(0, ${offset}px, 0) rotate(${rotate}deg)`;
+            }
+        });
+
+        // 3. Update project image parallax reveal
+        projectImages.forEach(img => {
+            const rect = img.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+            
+            // Calculate how far through the viewport the image has scrolled (0 to 1)
+            const percentVisible = (rect.top + rect.height) / (viewHeight + rect.height);
+            
+            // Map percentage to translateY offset (range: -15px to 15px)
+            const yOffset = (percentVisible - 0.5) * 35;
+            img.style.transform = `scale(1.15) translate3d(0, ${yOffset}px, 0)`;
+        });
+
+        // 4. Update Grid background shift
+        if (gridBg) {
+            currentGridX += (targetGridX - currentGridX) * 0.1;
+            currentGridY += (targetGridY - currentGridY) * 0.1;
+            gridBg.style.transform = `translate3d(${currentGridX}px, ${currentGridY}px, 0)`;
+        }
+
+        // 5. Magnetic attraction calculations
+        updateMagneticButtons();
+
+        requestAnimationFrame(animationLoop);
+    }
+    requestAnimationFrame(animationLoop);
+
+    /* ── ADVANCED 3D CARD TILT & GLARE EFFECT ────────────────── */
+    const tiltCards = document.querySelectorAll('.project-card, .skill-card');
+    
+    tiltCards.forEach(card => {
+        const glare = card.querySelector('.card-glare');
+        
+        card.addEventListener('mousemove', e => {
+            if (window.innerWidth < 768) return; // Disable tilt on mobile
+            
+            const rect = card.getBoundingClientRect();
+            const cardX = e.clientX - rect.left;
+            const cardY = e.clientY - rect.top;
+            
+            // Normalize inputs: -0.5 to 0.5
+            const x = cardX / rect.width - 0.5;
+            const y = cardY / rect.height - 0.5;
+            
+            // Scale and rotate
+            const rotateX = -y * 15; // Max 15 degrees tilt
+            const rotateY = x * 15;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+            
+            // Glare follow math
+            if (glare) {
+                const glareX = (cardX / rect.width) * 100;
+                const glareY = (cardY / rect.height) * 100;
+                card.style.setProperty('--glare-x', `${glareX}%`);
+                card.style.setProperty('--glare-y', `${glareY}%`);
+            }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+    });
+
+    /* ── MAGNETIC BUTTONS ATTRACTION ────────────────────────── */
+    const magneticBtns = document.querySelectorAll('.btn-primary, .btn-ghost, #hamburger');
+    const magIntensity = 0.35; // How strongly the button snaps (35%)
+    const magRadius = 55; // Radius of attraction field
+
+    // Maintain independent transition coordinates for buttons to prevent instant snapping
+    const buttonStates = new Map();
+    magneticBtns.forEach(btn => {
+        buttonStates.set(btn, { x: 0, y: 0 });
+    });
+
+    function updateMagneticButtons() {
+        if (window.innerWidth < 1024) {
+            // Restore default
+            magneticBtns.forEach(btn => {
+                btn.style.transform = '';
+            });
+            return;
+        }
+
+        magneticBtns.forEach(btn => {
+            const state = buttonStates.get(btn);
+            if (!state) return;
+
+            const rect = btn.getBoundingClientRect();
+            const btnCenterX = rect.left + rect.width / 2;
+            const btnCenterY = rect.top + rect.height / 2;
+
+            // Distance vector from cursor to center
+            const dx = mouseX - btnCenterX;
+            const dy = mouseY - btnCenterY;
+            const distance = Math.hypot(dx, dy);
+
+            let targetX = 0;
+            let targetY = 0;
+
+            if (distance < magRadius) {
+                // Pull button coordinates towards cursor proportional to closeness
+                const pullPower = (magRadius - distance) / magRadius;
+                targetX = dx * pullPower * magIntensity;
+                targetY = dy * pullPower * magIntensity;
+            }
+
+            // Interpolate coordinates for smooth transition
+            state.x += (targetX - state.x) * 0.15;
+            state.y += (targetY - state.y) * 0.15;
+
+            btn.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+        });
+    }
+
+    /* ── HERO 3D MOUSE PARALLAX ──────────────────────────────── */
+    const heroSection = document.getElementById('home');
+    const heroImageSide = document.querySelector('.hero-image-side');
+    const mainFrame = document.querySelector('.hero-img-frame');
+    const badgeTop = document.querySelector('.badge-top');
+    const badgeBottom = document.querySelector('.badge-bottom');
+    const ft1 = document.querySelector('.ft-1');
+    const ft2 = document.querySelector('.ft-2');
+    const ft3 = document.querySelector('.ft-3');
+
+    if (heroSection && heroImageSide) {
+        heroSection.addEventListener('mousemove', e => {
+            if (window.innerWidth < 1024) return; // Disable on tablet/mobile touch screens
+            
+            const rect = heroSection.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5; // range: -0.5 to 0.5
+            const y = (e.clientY - rect.top) / rect.height - 0.5; // range: -0.5 to 0.5
+            
+            // Tilt container
+            const rotateX = -y * 14; 
+            const rotateY = x * 14;
+            heroImageSide.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            
+            // Apply layer shifts (different values to represent depth layers)
+            if (mainFrame) mainFrame.style.transform = `translateZ(20px) translate3d(${x * 12}px, ${y * 12}px, 0)`;
+            if (badgeTop) badgeTop.style.transform = `translateZ(50px) translate3d(${x * 28}px, ${y * 28}px, 0) translateX(10px) translateY(-5px)`;
+            if (badgeBottom) badgeBottom.style.transform = `translateZ(40px) translate3d(${x * 24}px, ${y * 24}px, 0) translateX(-10px) translateY(5px)`;
+            if (ft1) ft1.style.transform = `translateZ(60px) translate3d(${x * -35}px, ${y * -35}px, 0) rotate(-10deg)`;
+            if (ft2) ft2.style.transform = `translateZ(80px) translate3d(${x * -45}px, ${y * -45}px, 0) rotate(15deg)`;
+            if (ft3) ft3.style.transform = `translateZ(50px) translate3d(${x * -30}px, ${y * -30}px, 0) rotate(5deg)`;
+        });
+        
+        heroSection.addEventListener('mouseleave', () => {
+            heroImageSide.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg)';
+            if (mainFrame) mainFrame.style.transform = 'translateZ(20px) translate3d(0, 0, 0)';
+            if (badgeTop) badgeTop.style.transform = 'translateZ(50px) translate3d(0, 0, 0) translateX(10px) translateY(-5px)';
+            if (badgeBottom) badgeBottom.style.transform = 'translateZ(40px) translate3d(0, 0, 0) translateX(-10px) translateY(5px)';
+            if (ft1) ft1.style.transform = 'translateZ(60px) translate3d(0, 0, 0) rotate(-10deg)';
+            if (ft2) ft2.style.transform = 'translateZ(80px) translate3d(0, 0, 0) rotate(15deg)';
+            if (ft3) ft3.style.transform = 'translateZ(50px) translate3d(0, 0, 0) rotate(5deg)';
+        });
+    }
     </script>
 </body>
 </html>
