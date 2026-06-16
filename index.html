@@ -1076,6 +1076,114 @@
             .hero-h1 { font-size: clamp(1.5rem, 7vw, 2rem); }
             .hero-type-wrap { font-size: clamp(0.85rem, 4vw, 1.1rem); }
         }
+
+        /* ─── AUDIO TOGGLE BUTTON ────────────────────────────────── */
+        #audio-toggle {
+            background: none; border: none; color: var(--muted);
+            font-size: 1.15rem; cursor: pointer; padding: 0.45rem 0.8rem;
+            transition: color 0.2s, transform 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #audio-toggle:hover { color: var(--text); transform: scale(1.1); }
+        #audio-toggle.active { color: var(--accent-2); }
+
+        /* ─── SKILLS RADAR CHART ─────────────────────────────────── */
+        .skills-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .skills-chart-card {
+            background: rgba(14, 16, 23, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 380px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        }
+        .skills-chart-card h3 {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            text-align: center;
+        }
+        .skills-chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 280px;
+        }
+
+        /* ─── GITHUB STATS SECTION ───────────────────────────────── */
+        .about-github {
+            margin-top: 5rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+        .github-title {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.01em;
+        }
+        .github-cards-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .github-card-item {
+            background: rgba(14, 16, 23, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: border-color 0.4s, box-shadow 0.4s;
+        }
+        .github-card-item:hover {
+            border-color: rgba(91,127,255,0.25);
+            box-shadow: 0 15px 35px rgba(91,127,255,0.05), 0 10px 25px rgba(0,0,0,0.4);
+        }
+        .github-card-item img {
+            width: 100%;
+            height: auto;
+            max-width: 480px;
+            border-radius: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .skills-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .skills-chart-card {
+                min-height: 320px;
+            }
+            .about-github {
+                margin-top: 4rem;
+                padding-top: 2rem;
+            }
+            .github-cards-wrap {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1118,6 +1226,7 @@
             <a href="#contact">Kontak</a>
         </div>
         <a href="#contact" class="nav-cta">HIRE ME</a>
+        <button id="audio-toggle" title="Toggle Sound (Mute/Unmute)"><i class="fas fa-volume-mute"></i></button>
         <button id="theme-toggle" title="Toggle theme"><i class="fas fa-moon"></i></button>
         <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
     </nav>
@@ -1232,6 +1341,19 @@
                     </a>
                 </div>
             </div>
+
+            <!-- GitHub Stats Widget -->
+            <div class="about-github fade-in" style="transition-delay:0.3s;">
+                <h3 class="github-title">Aktivitas GitHub</h3>
+                <div class="github-cards-wrap">
+                    <div class="github-card-item">
+                        <img src="https://github-readme-stats.vercel.app/api?username=elzidane&show_icons=true&theme=dark&bg_color=0e1017&title_color=5b7fff&icon_color=00e5c3&text_color=e8eaf0&border_color=252a37" alt="GitHub Stats">
+                    </div>
+                    <div class="github-card-item">
+                        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=elzidane&layout=compact&theme=dark&bg_color=0e1017&title_color=5b7fff&text_color=e8eaf0&border_color=252a37" alt="GitHub Top Languages">
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1326,56 +1448,68 @@
                 <p class="section-sub">Tools dan teknologi yang saya gunakan sehari-hari untuk membangun produk digital.</p>
                 <div class="divider"></div>
             </div>
-            <div class="skills-grid">
-                <div class="skill-card fade-in" style="transition-delay:0.05s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-html5" style="color:#e34f26"></i></div>
-                    <div class="skill-name">HTML5</div>
-                    <div class="skill-desc">Semantic Markup</div>
-                </div>
-                <div class="skill-card fade-in" style="transition-delay:0.1s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-css3-alt" style="color:#1572b6"></i></div>
-                    <div class="skill-name">CSS3</div>
-                    <div class="skill-desc">Modern Styling</div>
-                </div>
-                <div class="skill-card fade-in" style="transition-delay:0.15s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-js" style="color:#f7df1e"></i></div>
-                    <div class="skill-name">JavaScript</div>
-                    <div class="skill-desc">ES6+</div>
-                </div>
-                <div class="skill-card fade-in" style="transition-delay:0.2s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-react" style="color:#61dafb"></i></div>
-                    <div class="skill-name">React</div>
-                    <div class="skill-desc">Frontend SPA</div>
-                </div>
-                <div class="skill-card fade-in" style="transition-delay:0.25s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon" style="color:#54c5f8">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M5.9 15.375L2.5 12l11-11h6.775zM13.5 23l-5.925-5.925L13.5 11.15h6.775l-5.925 5.925L20.275 23z"/></svg>
+            <div class="skills-layout">
+                <div class="skills-left">
+                    <div class="skills-grid">
+                        <div class="skill-card fade-in" style="transition-delay:0.05s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-html5" style="color:#e34f26"></i></div>
+                            <div class="skill-name">HTML5</div>
+                            <div class="skill-desc">Semantic Markup</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.1s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-css3-alt" style="color:#1572b6"></i></div>
+                            <div class="skill-name">CSS3</div>
+                            <div class="skill-desc">Modern Styling</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.15s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-js" style="color:#f7df1e"></i></div>
+                            <div class="skill-name">JavaScript</div>
+                            <div class="skill-desc">ES6+</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.2s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-react" style="color:#61dafb"></i></div>
+                            <div class="skill-name">React</div>
+                            <div class="skill-desc">Frontend SPA</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.25s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon" style="color:#54c5f8">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M5.9 15.375L2.5 12l11-11h6.775zM13.5 23l-5.925-5.925L13.5 11.15h6.775l-5.925 5.925L20.275 23z"/></svg>
+                            </div>
+                            <div class="skill-name">Flutter</div>
+                            <div class="skill-desc">Mobile App</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.3s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-figma" style="color:#a259ff"></i></div>
+                            <div class="skill-name">Figma</div>
+                            <div class="skill-desc">UI/UX Design</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.35s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-node-js" style="color:#8cc84b"></i></div>
+                            <div class="skill-name">Node.js</div>
+                            <div class="skill-desc">Backend</div>
+                        </div>
+                        <div class="skill-card fade-in" style="transition-delay:0.4s">
+                            <div class="card-glare"></div>
+                            <div class="skill-icon"><i class="fab fa-git-alt" style="color:#f05032"></i></div>
+                            <div class="skill-name">Git</div>
+                            <div class="skill-desc">Version Control</div>
+                        </div>
                     </div>
-                    <div class="skill-name">Flutter</div>
-                    <div class="skill-desc">Mobile App</div>
                 </div>
-                <div class="skill-card fade-in" style="transition-delay:0.3s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-figma" style="color:#a259ff"></i></div>
-                    <div class="skill-name">Figma</div>
-                    <div class="skill-desc">UI/UX Design</div>
-                </div>
-                <div class="skill-card fade-in" style="transition-delay:0.35s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-node-js" style="color:#8cc84b"></i></div>
-                    <div class="skill-name">Node.js</div>
-                    <div class="skill-desc">Backend</div>
-                </div>
-                <div class="skill-card fade-in" style="transition-delay:0.4s">
-                    <div class="card-glare"></div>
-                    <div class="skill-icon"><i class="fab fa-git-alt" style="color:#f05032"></i></div>
-                    <div class="skill-name">Git</div>
-                    <div class="skill-desc">Version Control</div>
+                <div class="skills-right fade-in" style="transition-delay:0.45s">
+                    <div class="skills-chart-card">
+                        <h3>Peta Kompetensi</h3>
+                        <div class="skills-chart-wrapper">
+                            <canvas id="skills-radar-chart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1756,6 +1890,7 @@
 
     <!-- ─── THREE.JS ──────────────────────────────────────────── -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- ─── SCRIPTS ───────────────────────────────────────────── -->
     <script>
@@ -2238,10 +2373,19 @@
                 document.body.removeAttribute('data-theme');
                 icon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'dark');
+                if (window.playThemeChime) window.playThemeChime(false);
             } else {
                 document.body.setAttribute('data-theme', 'light');
                 icon.className = 'fas fa-sun';
                 localStorage.setItem('theme', 'light');
+                if (window.playThemeChime) window.playThemeChime(true);
+            }
+
+            // Dynamic Chart.js text color update
+            if (window.skillsChart) {
+                const labelColor = !isLight ? '#1a1d2e' : '#e8eaf0';
+                window.skillsChart.options.scales.r.pointLabels.color = labelColor;
+                window.skillsChart.update();
             }
         });
     })();
@@ -2457,17 +2601,20 @@
                     cards[idx].dispatchEvent(event);
                 }
                 print([{ cls:'success', text: '  Membuka detail proyek...' },{ cls:'muted', text:'' }]);
+                if (window.playTone) window.playTone(880, 'sine', 0.04, 0.05); // Success tone
                 return;
             }
 
             if (commands[cmd]) {
                 print(commands[cmd]());
+                if (window.playTone) window.playTone(880, 'sine', 0.04, 0.05); // Success tone
             } else {
                 print([
                     { cls:'error', text: `  command not found: ${cmd}` },
                     { cls:'muted', text: '  Ketik "help" untuk melihat perintah.' },
                     { cls:'muted', text: '' }
                 ]);
+                if (window.playTone) window.playTone(220, 'triangle', 0.06, 0.12); // Buzz tone
             }
         }
 
@@ -2571,6 +2718,201 @@
                 btn.style.background = '';
             }, 3000);
         });
+
+        /* ─── AUDIO SYNTH (WEB AUDIO API) ────────────────────────── */
+        let audioCtx = null;
+        let isMuted = localStorage.getItem('audio_muted') !== 'false'; // muted by default
+
+        const audioToggle = document.getElementById('audio-toggle');
+        const audioIcon = audioToggle ? audioToggle.querySelector('i') : null;
+
+        if (audioToggle && audioIcon) {
+            if (!isMuted) {
+                audioIcon.className = 'fas fa-volume-up';
+                audioToggle.classList.add('active');
+            } else {
+                audioIcon.className = 'fas fa-volume-mute';
+                audioToggle.classList.remove('active');
+            }
+
+            audioToggle.addEventListener('click', () => {
+                isMuted = !isMuted;
+                localStorage.setItem('audio_muted', isMuted);
+                
+                if (!isMuted) {
+                    audioIcon.className = 'fas fa-volume-up';
+                    audioToggle.classList.add('active');
+                    initAudioContext();
+                    playTone(523.25, 'sine', 0.08, 0.1); // C5 startup chime
+                } else {
+                    audioIcon.className = 'fas fa-volume-mute';
+                    audioToggle.classList.remove('active');
+                }
+            });
+        }
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type, volume, duration) {
+            if (isMuted) return;
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                
+                gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playTypewriterSound() {
+            if (isMuted) return;
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                const pitch = 900 + Math.random() * 400; 
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.02);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.02);
+            } catch (e) {}
+        }
+
+        function playHoverSound() {
+            playTone(1000, 'sine', 0.015, 0.03);
+        }
+
+        function playClickSound() {
+            playTone(700, 'sine', 0.08, 0.08);
+        }
+
+        function playThemeChime(isToLight) {
+            if (isMuted) return;
+            try {
+                if (isToLight) {
+                    playTone(523.25, 'sine', 0.04, 0.1);
+                    setTimeout(() => playTone(659.25, 'sine', 0.04, 0.1), 80);
+                    setTimeout(() => playTone(783.99, 'sine', 0.04, 0.15), 160);
+                } else {
+                    playTone(783.99, 'sine', 0.04, 0.1);
+                    setTimeout(() => playTone(659.25, 'sine', 0.04, 0.1), 80);
+                    setTimeout(() => playTone(523.25, 'sine', 0.04, 0.15), 160);
+                }
+            } catch (e) {}
+        }
+        window.playThemeChime = playThemeChime;
+        window.playTone = playTone;
+
+        const termInput = document.getElementById('terminal-input');
+        if (termInput) {
+            termInput.addEventListener('keydown', (e) => {
+                if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter') {
+                    playTypewriterSound();
+                }
+            });
+        }
+
+        const clickables = document.querySelectorAll('a, button, .project-card, .skill-card, .cert-filter-btn');
+        clickables.forEach(el => {
+            if (el.id === 'terminal-input' || el.id === 'audio-toggle') return;
+            el.addEventListener('mouseenter', playHoverSound);
+            el.addEventListener('click', playClickSound);
+        });
+
+        /* ─── SKILLS RADAR CHART (CHART.JS) ──────────────────────── */
+        function initSkillsChart() {
+            const chartCanvas = document.getElementById('skills-radar-chart');
+            if (!chartCanvas || typeof Chart === 'undefined') return;
+
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            const labelColor = isLight ? '#1a1d2e' : '#e8eaf0';
+            const gridColor = 'rgba(255, 255, 255, 0.08)';
+
+            window.skillsChart = new Chart(chartCanvas, {
+                type: 'radar',
+                data: {
+                    labels: ['Frontend', 'Backend', 'Mobile Dev', 'UI/UX Design', 'Database', 'Git / Tools'],
+                    datasets: [{
+                        label: 'Tingkat Penguasaan',
+                        data: [85, 70, 90, 80, 75, 85],
+                        backgroundColor: 'rgba(91, 127, 255, 0.15)',
+                        borderColor: '#5b7fff',
+                        pointBackgroundColor: '#00e5c3',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00e5c3',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: gridColor
+                            },
+                            grid: {
+                                color: gridColor
+                            },
+                            pointLabels: {
+                                color: labelColor,
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 11,
+                                    weight: '500'
+                                }
+                            },
+                            ticks: {
+                                display: false,
+                                maxTicksLimit: 5
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#0b0d14',
+                            titleFont: { family: "'Syne', sans-serif" },
+                            bodyFont: { family: "'DM Sans', sans-serif" },
+                            borderColor: 'rgba(91,127,255,0.2)',
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
+        }
+
+        initSkillsChart();
 
         function showStatus(msg, color) {
             status.textContent = msg;
