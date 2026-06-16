@@ -25,6 +25,19 @@
             --font-mono: 'JetBrains Mono', monospace;
         }
 
+        /* ─── LIGHT MODE ─────────────────────────────────────────── */
+        body[data-theme="light"] {
+            --bg:        #f5f6fa;
+            --bg-2:      #eef0f8;
+            --bg-card:   rgba(0,0,0,0.03);
+            --border:    rgba(0,0,0,0.07);
+            --border-hi: rgba(0,0,0,0.14);
+            --text:      #1a1d2e;
+            --muted:     #6b7280;
+            --glow:      rgba(91,127,255,0.25);
+        }
+        body { transition: background 0.45s ease, color 0.45s ease; }
+
         /* ─── RESET ──────────────────────────────────────────────── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -558,10 +571,46 @@
         #notif.error { border-left: 3px solid var(--accent-3); }
 
         /* ─── CERTIFICATES ───────────────────────────────────────── */
+        .cert-filters {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+        .cert-filter-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            padding: 0.6rem 1.5rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: var(--font-head);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            backdrop-filter: blur(8px);
+        }
+        .cert-filter-btn:hover {
+            color: #ffffff;
+            border-color: rgba(91,127,255,0.3);
+            background: rgba(91,127,255,0.05);
+            transform: translateY(-2px);
+        }
+        .cert-filter-btn.active {
+            color: #ffffff;
+            border-color: var(--accent);
+            background: rgba(0, 229, 195, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 229, 195, 0.15);
+        }
+
         .cert-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.5rem;
+            transition: all 0.5s ease;
         }
         .cert-card {
             background: rgba(14, 16, 23, 0.6);
@@ -569,52 +618,396 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.05);
             border-radius: 14px;
-            padding: 1.5rem;
             display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            flex-direction: column;
+            transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, scale 0.4s ease;
             position: relative;
+            overflow: hidden;
+            height: 100%;
+            transform-origin: center;
+        }
+        .cert-card.hidden {
+            opacity: 0;
+            transform: scale(0.9) translateY(15px);
+            pointer-events: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            padding: 0;
+            border: 0;
+            margin: 0;
             overflow: hidden;
         }
         .cert-card::before {
             content: '';
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 0% 0%, rgba(91,127,255,0.07), transparent 60%);
+            background: radial-gradient(circle at 50% 0%, rgba(91,127,255,0.08), transparent 70%);
             opacity: 0; transition: opacity 0.4s;
+            pointer-events: none;
         }
         .cert-card:hover {
             border-color: rgba(91,127,255,0.35);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 0 15px rgba(91,127,255,0.04);
-            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 0 15px rgba(91,127,255,0.05);
+            transform: translateY(-6px);
         }
         .cert-card:hover::before { opacity: 1; }
+        
+        .cert-img-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3/2;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .cert-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .cert-card:hover .cert-img {
+            transform: scale(1.08);
+        }
+        .cert-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(14, 16, 23, 0.75);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .cert-img-wrap:hover .cert-img-overlay {
+            opacity: 1;
+        }
+        .cert-view-btn {
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            letter-spacing: 0.08em;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 229, 195, 0.3);
+            transform: translateY(10px);
+            transition: transform 0.3s ease, background 0.3s;
+        }
+        .cert-img-wrap:hover .cert-view-btn {
+            transform: translateY(0);
+        }
+        .cert-view-btn:hover {
+            background: #00c4a6;
+        }
+        
+        .cert-body {
+            padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .cert-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
         .cert-icon {
-            width: 46px; height: 46px; flex-shrink: 0;
-            border-radius: 10px;
+            width: 36px; height: 36px; flex-shrink: 0;
+            border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
         .cert-icon.blue  { background: rgba(91,127,255,0.12); color: #5b7fff; }
         .cert-icon.cyan  { background: rgba(0,229,195,0.12); color: #00e5c3; }
         .cert-icon.green { background: rgba(72,199,116,0.12); color: #48c774; }
         .cert-icon.orange{ background: rgba(255,165,0,0.12);  color: #ffa500; }
-        .cert-info { flex: 1; min-width: 0; }
         .cert-name {
             font-family: var(--font-head); font-size: 0.95rem; font-weight: 700;
-            margin-bottom: 0.25rem; line-height: 1.3;
+            line-height: 1.35;
+            color: #ffffff;
         }
-        .cert-issuer { font-size: 0.78rem; color: var(--accent-2); margin-bottom: 0.5rem; font-family: var(--font-mono); }
+        .cert-issuer { 
+            font-size: 0.78rem; 
+            color: var(--accent-2); 
+            margin-bottom: 0.75rem; 
+            font-family: var(--font-mono); 
+        }
+        .cert-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
         .cert-date {
             font-size: 0.72rem; color: var(--muted);
             display: inline-flex; align-items: center; gap: 0.35rem;
         }
         .cert-badge {
-            position: absolute; top: 1rem; right: 1rem;
-            background: rgba(0,229,195,0.12); color: var(--accent-2);
-            font-size: 0.65rem; font-family: var(--font-mono); letter-spacing: 0.06em;
-            padding: 0.2rem 0.6rem; border-radius: 100px;
+            position: absolute; top: 0.8rem; right: 0.8rem;
+            background: rgba(0,229,195,0.15); color: var(--accent-2);
+            font-size: 0.6rem; font-family: var(--font-mono); letter-spacing: 0.06em;
+            padding: 0.15rem 0.5rem; border-radius: 100px;
+            border: 1px solid rgba(0,229,195,0.25);
+            z-index: 2;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ─── LIGHTBOX MODAL ─────────────────────────────────────── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 11, 15, 0.94);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .lightbox.show {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content {
+            max-width: 85%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(91, 127, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .lightbox.show .lightbox-content {
+            transform: scale(1);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 2rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .lightbox-close:hover {
+            color: #ffffff;
+            background: rgba(255, 30, 30, 0.15);
+            border-color: rgba(255, 30, 30, 0.25);
+            transform: rotate(90deg);
+        }
+        .lightbox-caption {
+            position: absolute;
+            bottom: 2rem;
+            color: #ffffff;
+            font-family: var(--font-head);
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            padding: 0 2rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        /* ─── THEME TOGGLE ───────────────────────────────────────── */
+        #theme-toggle {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-hi);
+            color: var(--text);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.25,1,0.5,1);
+            flex-shrink: 0;
+        }
+        #theme-toggle:hover {
+            background: rgba(91,127,255,0.12);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: rotate(20deg) scale(1.1);
+        }
+        body[data-theme="light"] .grid-bg { opacity: 0.4; }
+        body[data-theme="light"] nav {
+            background: rgba(245,246,250,0.9);
+            border-color: rgba(0,0,0,0.08);
+        }
+        body[data-theme="light"] #mobile-nav { background: rgba(245,246,250,0.98); }
+        body[data-theme="light"] .project-card,
+        body[data-theme="light"] .skill-card,
+        body[data-theme="light"] .cert-card,
+        body[data-theme="light"] .timeline-item { background: rgba(255,255,255,0.7); }
+        body[data-theme="light"] section { background: transparent; }
+        body[data-theme="light"] #splash { background: var(--bg); }
+
+        /* ─── PROJECT DETAIL MODAL ───────────────────────────────── */
+        .project-modal-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 9998;
+            background: rgba(5,6,10,0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            align-items: center; justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .project-modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+        .project-modal {
+            background: var(--bg-2);
+            border: 1px solid var(--border-hi);
+            border-radius: 20px;
+            max-width: 720px; width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(91,127,255,0.08);
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.25,1,0.5,1);
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-hi) transparent;
+        }
+        .project-modal-overlay.open .project-modal { transform: scale(1) translateY(0); }
+        .project-modal-img {
+            width: 100%; height: 240px; object-fit: cover;
+            border-radius: 20px 20px 0 0;
+        }
+        .project-modal-body { padding: 2rem; }
+        .project-modal-tag {
+            display: inline-block;
+            font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
+            color: var(--accent-2); background: rgba(0,229,195,0.1);
             border: 1px solid rgba(0,229,195,0.2);
+            padding: 0.25rem 0.7rem; border-radius: 100px; margin-bottom: 0.75rem;
+        }
+        .project-modal-title {
+            font-family: var(--font-head); font-size: 1.6rem; font-weight: 800;
+            color: var(--text); margin-bottom: 0.5rem; line-height: 1.2;
+        }
+        .project-modal-desc {
+            color: var(--muted); font-size: 0.95rem; line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .project-modal-section-title {
+            font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em;
+            color: var(--muted); text-transform: uppercase; margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem; border-bottom: 1px solid var(--border);
+        }
+        .project-modal-features {
+            list-style: none; margin-bottom: 1.5rem;
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .project-modal-features li {
+            font-size: 0.9rem; color: var(--text);
+            display: flex; align-items: flex-start; gap: 0.6rem;
+        }
+        .project-modal-features li::before {
+            content: '▸'; color: var(--accent); flex-shrink: 0; margin-top: 0.05em;
+        }
+        .project-modal-tech { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .project-modal-footer {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            padding-top: 1.25rem; border-top: 1px solid var(--border);
+        }
+        .project-modal-close {
+            position: absolute; top: 1.25rem; right: 1.25rem;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-hi);
+            color: var(--muted); width: 38px; height: 38px;
+            border-radius: 50%; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; z-index: 10;
+        }
+        .project-modal-close:hover { color: #fff; background: rgba(255,50,50,0.15); border-color: rgba(255,50,50,0.3); transform: rotate(90deg); }
+        .project-card { cursor: pointer; }
+
+        /* ─── DEVELOPER TERMINAL ─────────────────────────────────── */
+        #terminal-toggle {
+            position: fixed; bottom: 6rem; right: 1.5rem;
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border: none; border-radius: 50%;
+            color: #fff; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(91,127,255,0.4);
+            transition: all 0.3s cubic-bezier(0.25,1,0.5,1);
+            z-index: 990; display: flex; align-items: center; justify-content: center;
+        }
+        #terminal-toggle:hover { transform: scale(1.12) rotate(-10deg); box-shadow: 0 6px 30px rgba(91,127,255,0.55); }
+        #terminal-widget {
+            position: fixed; bottom: 10.5rem; right: 1.5rem;
+            width: 480px; max-width: calc(100vw - 3rem);
+            background: #0b0d14;
+            border: 1px solid rgba(91,127,255,0.25);
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(91,127,255,0.08);
+            z-index: 989;
+            display: none; flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.92) translateY(20px);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.25,1,0.5,1);
+        }
+        #terminal-widget.open { display: flex; transform: scale(1) translateY(0); opacity: 1; }
+        .terminal-titlebar {
+            background: rgba(255,255,255,0.04);
+            padding: 0.6rem 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28c840; }
+        .terminal-title {
+            font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+            margin-left: 0.5rem; flex: 1; text-align: center;
+        }
+        .terminal-body {
+            padding: 1rem 1.25rem;
+            font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.7;
+            color: #c9d1d9;
+            height: 280px; overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+        }
+        .terminal-line { margin-bottom: 0.1rem; }
+        .terminal-line.cmd { color: var(--accent-2); }
+        .terminal-line.output { color: #c9d1d9; }
+        .terminal-line.error { color: var(--accent-3); }
+        .terminal-line.success { color: #28c840; }
+        .terminal-line.accent { color: var(--accent); }
+        .terminal-input-row {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.2);
+        }
+        .terminal-prompt { color: var(--accent-2); font-family: var(--font-mono); font-size: 0.82rem; white-space: nowrap; }
+        #terminal-input {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: #fff; font-family: var(--font-mono); font-size: 0.82rem;
+            caret-color: var(--accent-2);
         }
 
         /* ─── TILT CARDS ─────────────────────────────────────────── */
@@ -725,6 +1118,7 @@
             <a href="#contact">Kontak</a>
         </div>
         <a href="#contact" class="nav-cta">HIRE ME</a>
+        <button id="theme-toggle" title="Toggle theme"><i class="fas fa-moon"></i></button>
         <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
     </nav>
 
@@ -856,7 +1250,7 @@
             </div>
             <div class="projects-grid">
                 <!-- Card 1 -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.1s">
+                <div class="project-card tilt-card fade-in" style="transition-delay:0.1s" data-modal-id="0">
                     <div class="card-glare"></div>
                     <div class="project-img">
                         <img src="asset/port.png" alt="Portfolio" class="parallax-img">
@@ -876,7 +1270,7 @@
                     </div>
                 </div>
                 <!-- Card 2 -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.2s">
+                <div class="project-card tilt-card fade-in" style="transition-delay:0.2s" data-modal-id="1">
                     <div class="card-glare"></div>
                     <div class="project-img">
                         <img src="asset/Dashboard Situ.png" alt="Dashboard SITU" class="parallax-img">
@@ -896,7 +1290,7 @@
                     </div>
                 </div>
                 <!-- Card 3 -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.3s">
+                <div class="project-card tilt-card fade-in" style="transition-delay:0.3s" data-modal-id="2">
                     <div class="card-glare"></div>
                     <div class="project-img">
                         <img src="asset/webkunjungan1.png" alt="School Visit" class="parallax-img">
@@ -999,59 +1393,180 @@
                 <p class="section-sub">Sertifikasi profesional dan penghargaan yang telah saya raih dalam perjalanan belajar.</p>
                 <div class="divider"></div>
             </div>
+            <!-- Category Filters -->
+            <div class="cert-filters fade-in" style="transition-delay:0.02s">
+                <button class="cert-filter-btn active" data-filter="all">Semua</button>
+                <button class="cert-filter-btn" data-filter="lomba">Lomba</button>
+                <button class="cert-filter-btn" data-filter="pelatihan">Pelatihan</button>
+                <button class="cert-filter-btn" data-filter="lainnya">Lainnya</button>
+            </div>
+
             <div class="cert-grid">
-                <div class="cert-card fade-in" style="transition-delay:0.05s">
-                    <div class="cert-badge">VERIFIED</div>
-                    <div class="cert-icon blue"><i class="fas fa-code"></i></div>
-                    <div class="cert-info">
-                        <div class="cert-name">Belajar Dasar Pemrograman Web</div>
-                        <div class="cert-issuer">Dicoding Indonesia</div>
-                        <div class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</div>
+                <!-- Card Lomba (New) -->
+                <div class="cert-card fade-in" data-category="lomba" style="transition-delay:0.05s">
+                    <div class="cert-badge">WINNER</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_lomba.png" alt="Juara 1 Web Technologies LKS" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon orange"><i class="fas fa-trophy"></i></div>
+                            <h3 class="cert-name">Juara 1 Web Technologies</h3>
+                        </div>
+                        <div class="cert-issuer">LKS SMK Tingkat Kota Malang</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</span>
+                        </div>
                     </div>
                 </div>
-                <div class="cert-card fade-in" style="transition-delay:0.1s">
+
+                <!-- Card Pelatihan 1 -->
+                <div class="cert-card fade-in" data-category="pelatihan" style="transition-delay:0.1s">
                     <div class="cert-badge">VERIFIED</div>
-                    <div class="cert-icon cyan"><i class="fas fa-layer-group"></i></div>
-                    <div class="cert-info">
-                        <div class="cert-name">Belajar Membuat Front-End Web untuk Pemula</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_pelatihan.png" alt="Belajar Dasar Pemrograman Web" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon blue"><i class="fas fa-code"></i></div>
+                            <h3 class="cert-name">Belajar Dasar Pemrograman Web</h3>
+                        </div>
                         <div class="cert-issuer">Dicoding Indonesia</div>
-                        <div class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</span>
+                        </div>
                     </div>
                 </div>
-                <div class="cert-card fade-in" style="transition-delay:0.15s">
+
+                <!-- Card Pelatihan 2 -->
+                <div class="cert-card fade-in" data-category="pelatihan" style="transition-delay:0.15s">
                     <div class="cert-badge">VERIFIED</div>
-                    <div class="cert-icon green"><i class="fab fa-js"></i></div>
-                    <div class="cert-info">
-                        <div class="cert-name">Belajar Dasar Pemrograman JavaScript</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_pelatihan.png" alt="Belajar Membuat Front-End Web untuk Pemula" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon cyan"><i class="fas fa-layer-group"></i></div>
+                            <h3 class="cert-name">Belajar Membuat Front-End Web untuk Pemula</h3>
+                        </div>
                         <div class="cert-issuer">Dicoding Indonesia</div>
-                        <div class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</span>
+                        </div>
                     </div>
                 </div>
-                <div class="cert-card fade-in" style="transition-delay:0.2s">
+
+                <!-- Card Pelatihan 3 -->
+                <div class="cert-card fade-in" data-category="pelatihan" style="transition-delay:0.2s">
                     <div class="cert-badge">VERIFIED</div>
-                    <div class="cert-icon orange"><i class="fas fa-paint-brush"></i></div>
-                    <div class="cert-info">
-                        <div class="cert-name">UI/UX Design Fundamentals</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_pelatihan.png" alt="Belajar Dasar Pemrograman JavaScript" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon green"><i class="fab fa-js"></i></div>
+                            <h3 class="cert-name">Belajar Dasar Pemrograman JavaScript</h3>
+                        </div>
+                        <div class="cert-issuer">Dicoding Indonesia</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Pelatihan 4 -->
+                <div class="cert-card fade-in" data-category="pelatihan" style="transition-delay:0.25s">
+                    <div class="cert-badge">VERIFIED</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_pelatihan.png" alt="UI/UX Design Fundamentals" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon orange"><i class="fas fa-paint-brush"></i></div>
+                            <h3 class="cert-name">UI/UX Design Fundamentals</h3>
+                        </div>
                         <div class="cert-issuer">Certiport / SMK Telkom Malang</div>
-                        <div class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</span>
+                        </div>
                     </div>
                 </div>
-                <div class="cert-card fade-in" style="transition-delay:0.25s">
+
+                <!-- Card Pelatihan 5 -->
+                <div class="cert-card fade-in" data-category="pelatihan" style="transition-delay:0.3s">
                     <div class="cert-badge">VERIFIED</div>
-                    <div class="cert-icon blue"><i class="fab fa-react"></i></div>
-                    <div class="cert-info">
-                        <div class="cert-name">Belajar Membuat Aplikasi Web dengan React</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_pelatihan.png" alt="Belajar Membuat Aplikasi Web dengan React" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon blue"><i class="fab fa-react"></i></div>
+                            <h3 class="cert-name">Belajar Membuat Aplikasi Web dengan React</h3>
+                        </div>
                         <div class="cert-issuer">Dicoding Indonesia</div>
-                        <div class="cert-date"><i class="fas fa-calendar-alt"></i> 2025</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2025</span>
+                        </div>
                     </div>
                 </div>
-                <div class="cert-card fade-in" style="transition-delay:0.3s">
+
+                <!-- Card Pelatihan 6 -->
+                <div class="cert-card fade-in" data-category="pelatihan" style="transition-delay:0.35s">
                     <div class="cert-badge">VERIFIED</div>
-                    <div class="cert-icon cyan"><i class="fas fa-mobile-alt"></i></div>
-                    <div class="cert-info">
-                        <div class="cert-name">Belajar Membuat Aplikasi Flutter untuk Pemula</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_pelatihan.png" alt="Belajar Membuat Aplikasi Flutter untuk Pemula" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon cyan"><i class="fas fa-mobile-alt"></i></div>
+                            <h3 class="cert-name">Belajar Membuat Aplikasi Flutter untuk Pemula</h3>
+                        </div>
                         <div class="cert-issuer">Dicoding Indonesia</div>
-                        <div class="cert-date"><i class="fas fa-calendar-alt"></i> 2025</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Lainnya (New) -->
+                <div class="cert-card fade-in" data-category="lainnya" style="transition-delay:0.4s">
+                    <div class="cert-badge">PARTICIPANT</div>
+                    <div class="cert-img-wrap">
+                        <img src="asset/cert_lainnya.png" alt="Peserta Seminar Artificial Intelligence" class="cert-img">
+                        <div class="cert-img-overlay">
+                            <span class="cert-view-btn"><i class="fas fa-search-plus"></i> LIHAT DETAIL</span>
+                        </div>
+                    </div>
+                    <div class="cert-body">
+                        <div class="cert-header">
+                            <div class="cert-icon green"><i class="fas fa-users"></i></div>
+                            <h3 class="cert-name">Seminar Artificial Intelligence</h3>
+                        </div>
+                        <div class="cert-issuer">Telkom University & Industry Seminar</div>
+                        <div class="cert-footer">
+                            <span class="cert-date"><i class="fas fa-calendar-alt"></i> 2024</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1170,9 +1685,10 @@
                             <label>PESAN</label>
                             <textarea id="f-message" rows="5" placeholder="Ceritakan tentang proyek Anda..."></textarea>
                         </div>
-                        <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:1rem">
-                            Kirim Pesan <i class="fas fa-paper-plane"></i>
+                        <button type="submit" id="btn-send" class="btn-primary" style="width:100%;justify-content:center;padding:1rem;gap:0.6rem;transition:all 0.3s">
+                            <span id="btn-send-text">Kirim Pesan</span> <i class="fas fa-paper-plane" id="btn-send-icon"></i>
                         </button>
+                        <div id="form-status" style="margin-top:0.75rem;font-family:var(--font-mono);font-size:0.78rem;text-align:center;display:none;"></div>
                     </form>
                 </div>
             </div>
@@ -1185,6 +1701,43 @@
         <div>© 2024 EL Zidane Ardyansyah · Dibuat dengan <i class="fas fa-heart" style="color:var(--accent-3)"></i></div>
     </footer>
 
+    <!-- ─── PROJECT MODAL ──────────────────────────────────── -->
+    <div class="project-modal-overlay" id="project-modal-overlay" role="dialog" aria-modal="true">
+        <div class="project-modal" id="project-modal" style="position:relative;">
+            <button class="project-modal-close" id="project-modal-close" aria-label="Tutup"><i class="fas fa-times"></i></button>
+            <img src="" alt="" class="project-modal-img" id="modal-img">
+            <div class="project-modal-body">
+                <span class="project-modal-tag" id="modal-tag">WEB</span>
+                <h2 class="project-modal-title" id="modal-title"></h2>
+                <p class="project-modal-desc" id="modal-desc"></p>
+                <p class="project-modal-section-title">FITUR UTAMA</p>
+                <ul class="project-modal-features" id="modal-features"></ul>
+                <p class="project-modal-section-title">TECH STACK</p>
+                <div class="project-modal-tech" id="modal-tech"></div>
+                <div class="project-modal-footer">
+                    <a href="#" id="modal-live-link" target="_blank" class="btn-primary" style="font-size:0.85rem;padding:0.65rem 1.4rem"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                    <a href="#" id="modal-github-link" target="_blank" class="btn-ghost" style="font-size:0.85rem;padding:0.65rem 1.4rem"><i class="fab fa-github"></i> GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── DEVELOPER TERMINAL ──────────────────────────────── -->
+    <button id="terminal-toggle" title="Developer Terminal"><i class="fas fa-terminal"></i></button>
+    <div id="terminal-widget">
+        <div class="terminal-titlebar">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">zeedev@portfolio:~$</span>
+        </div>
+        <div class="terminal-body" id="terminal-body"></div>
+        <div class="terminal-input-row">
+            <span class="terminal-prompt">zeedev@portfolio:~$&nbsp;</span>
+            <input type="text" id="terminal-input" placeholder="ketik 'help' untuk mulai..." autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+
     <!-- Back to Top -->
     <button id="btt"><i class="fas fa-arrow-up"></i></button>
 
@@ -1192,6 +1745,13 @@
     <div id="notif">
         <i class="fas fa-check-circle" id="notif-icon"></i>
         <span id="notif-msg">Pesan terkirim!</span>
+    </div>
+
+    <!-- Lightbox Modal for Certificates -->
+    <div id="cert-lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" alt="Certificate Preview">
+        <div id="lightbox-caption" class="lightbox-caption"></div>
     </div>
 
     <!-- ─── THREE.JS ──────────────────────────────────────────── -->
@@ -1247,11 +1807,99 @@
     /* ── NOTIFICATION ────────────────────────────────────────── */
     function showNotif(msg,type='success'){const el=document.getElementById('notif');const icon=document.getElementById('notif-icon');document.getElementById('notif-msg').textContent=msg;el.className='show '+type;icon.className='fas '+(type==='success'?'fa-check-circle':'fa-exclamation-circle');setTimeout(()=>{el.className='';},3500);}
 
-    /* ── CONTACT FORM ────────────────────────────────────────── */
-    document.getElementById('contact-form').addEventListener('submit',e=>{e.preventDefault();const n=document.getElementById('f-name').value,em=document.getElementById('f-email').value,msg=document.getElementById('f-message').value;if(!n||!em||!msg){showNotif('Mohon isi semua field!','error');return;}showNotif('Pesan berhasil dikirim! 🚀','success');e.target.reset();});
+
 
     /* ── CV DOWNLOAD ─────────────────────────────────────────── */
-    document.getElementById('btn-cv').addEventListener('click',()=>{showNotif('Mengunduh CV...','success');const link=document.createElement('a');link.href='file/CV_ZeeDev.pdf';link.download='CV_ZeeDev.pdf';document.body.appendChild(link);link.click();document.body.removeChild(link);});
+    document.getElementById('btn-cv').addEventListener('click',()=>{
+        showNotif('Membuka CV ATS... 📄','success');
+        setTimeout(() => {
+            window.open('cv.html', '_blank');
+        }, 1000);
+    });
+
+    /* ── CERTIFICATE FILTER & LIGHTBOX ───────────────────────── */
+    const certFilterBtns = document.querySelectorAll('.cert-filter-btn');
+    const certCards = document.querySelectorAll('.cert-card');
+    const certLightbox = document.getElementById('cert-lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = document.querySelector('.lightbox-close');
+
+    // Filtering logic
+    certFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons and add to clicked one
+            certFilterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.dataset.filter;
+
+            certCards.forEach(card => {
+                const category = card.dataset.category;
+                
+                if (filter === 'all' || category === filter) {
+                    card.classList.remove('hidden');
+                    card.style.display = 'flex';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1) translateY(0)';
+                    }, 50);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9) translateY(15px)';
+                    setTimeout(() => {
+                        card.classList.add('hidden');
+                        card.style.display = 'none';
+                    }, 300); // match CSS transition time
+                }
+            });
+        });
+    });
+
+    // Lightbox modal logic
+    certCards.forEach(card => {
+        const imgWrap = card.querySelector('.cert-img-wrap');
+        if (imgWrap) {
+            imgWrap.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const img = imgWrap.querySelector('img');
+                const title = card.querySelector('.cert-name').textContent;
+                const issuer = card.querySelector('.cert-issuer').textContent;
+                
+                if (img) {
+                    lightboxImg.src = img.src;
+                    lightboxCaption.innerHTML = `${title} <br><span style="font-size:0.85rem;font-weight:400;color:var(--accent-2);">${issuer}</span>`;
+                    certLightbox.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Lock background scroll
+                }
+            });
+        }
+    });
+
+    // Close lightbox functions
+    function closeLightboxFunc() {
+        certLightbox.classList.remove('show');
+        document.body.style.overflow = ''; // Unlock scroll
+    }
+
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightboxFunc);
+    }
+    
+    if (certLightbox) {
+        certLightbox.addEventListener('click', (e) => {
+            if (e.target === certLightbox || e.target.classList.contains('lightbox-close')) {
+                closeLightboxFunc();
+            }
+        });
+        
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && certLightbox.classList.contains('show')) {
+                closeLightboxFunc();
+            }
+        });
+    }
 
     /* ── INTERSECTION OBSERVER ───────────────────────────────── */
     function startAnimations(){
@@ -1567,6 +2215,370 @@
         
         animate3D();
     }
+    </script>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+    /* ═══════════════════════════════════════════════════════════
+       1. DARK / LIGHT MODE TOGGLE
+    ═══════════════════════════════════════════════════════════ */
+    (function() {
+        const btn = document.getElementById('theme-toggle');
+        const icon = btn.querySelector('i');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            icon.className = 'fas fa-sun';
+        }
+        btn.addEventListener('click', () => {
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.body.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    })();
+
+    /* ═══════════════════════════════════════════════════════════
+       2. PROJECT DETAIL MODAL
+    ═══════════════════════════════════════════════════════════ */
+    (function() {
+        const projectsData = [
+            {
+                title: 'Portofolio Pribadi',
+                tag: 'WEB',
+                img: 'asset/port.png',
+                desc: 'Website portofolio modern yang dibangun dari nol dengan HTML, CSS, dan JavaScript murni. Menampilkan animasi premium, desain responsif, dan pengalaman interaktif yang memukau — tanpa framework UI.',
+                features: [
+                    'Splash screen animasi dengan loading bar',
+                    'Efek tilt 3D pada kartu proyek & skill',
+                    'Parallax scrolling multi-layer',
+                    'Typewriter effect pada headline hero',
+                    'Animasi partikel 3D dengan Three.js',
+                    'Sertifikat dengan filter kategori & lightbox'
+                ],
+                tech: ['HTML5','CSS3','JavaScript','Three.js','Font Awesome'],
+                live: 'https://personal-portfolio-five-indol-45.vercel.app/',
+                github: 'https://github.com/elzidane'
+            },
+            {
+                title: 'Dashboard SITU',
+                tag: 'WEB',
+                img: 'asset/Dashboard Situ.png',
+                desc: 'Dashboard sistem informasi administrasi sekolah lengkap. Menyediakan manajemen data siswa, guru, mata pelajaran, dan laporan akademik dalam satu antarmuka terpadu yang intuitif.',
+                features: [
+                    'Autentikasi pengguna multi-role (Admin, Guru, Siswa)',
+                    'CRUD data siswa, guru & mata pelajaran',
+                    'Dashboard analitik dengan chart interaktif',
+                    'Manajemen absensi dan nilai',
+                    'Export laporan ke PDF & Excel',
+                    'Desain responsif untuk semua perangkat'
+                ],
+                tech: ['React','Node.js','MongoDB','Express','Chart.js','JWT'],
+                live: 'https://dashboard-situ.vercel.app/',
+                github: 'https://github.com/elzidane'
+            },
+            {
+                title: 'Sistem Kunjungan Sekolah',
+                tag: 'FULLSTACK',
+                img: 'asset/webkunjungan1.png',
+                desc: 'Platform digital untuk pendaftaran dan manajemen kunjungan industri sekolah. Memudahkan koordinasi antara siswa, guru pembimbing, dan pihak industri dengan alur kerja yang terstruktur.',
+                features: [
+                    'Formulir pendaftaran kunjungan online',
+                    'Panel admin untuk approval dan tracking',
+                    'Notifikasi real-time status pendaftaran',
+                    'Manajemen kapasitas per sesi kunjungan',
+                    'Laporan dan statistik kunjungan',
+                    'QR code check-in untuk peserta'
+                ],
+                tech: ['Next.js','Express','MySQL','Prisma','Tailwind CSS','JWT'],
+                live: 'https://moklet-visit.vercel.app/',
+                github: 'https://github.com/elzidane'
+            }
+        ];
+
+        const overlay = document.getElementById('project-modal-overlay');
+        const closeBtn = document.getElementById('project-modal-close');
+
+        function openModal(idx) {
+            const d = projectsData[idx];
+            if (!d) return;
+            document.getElementById('modal-img').src = d.img;
+            document.getElementById('modal-img').alt = d.title;
+            document.getElementById('modal-tag').textContent = d.tag;
+            document.getElementById('modal-title').textContent = d.title;
+            document.getElementById('modal-desc').textContent = d.desc;
+            const fl = document.getElementById('modal-features');
+            fl.innerHTML = d.features.map(f => `<li>${f}</li>`).join('');
+            const tl = document.getElementById('modal-tech');
+            tl.innerHTML = d.tech.map(t => `<span class="tech-pill">${t}</span>`).join('');
+            document.getElementById('modal-live-link').href = d.live;
+            document.getElementById('modal-github-link').href = d.github;
+            overlay.style.display = 'flex';
+            requestAnimationFrame(() => overlay.classList.add('open'));
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            overlay.classList.remove('open');
+            setTimeout(() => { overlay.style.display = 'none'; document.body.style.overflow = ''; }, 350);
+        }
+
+        document.querySelectorAll('.project-card[data-modal-id]').forEach(card => {
+            card.addEventListener('click', e => {
+                if (e.target.closest('a')) return; // allow link clicks
+                openModal(+card.dataset.modalId);
+            });
+        });
+
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+    })();
+
+    /* ═══════════════════════════════════════════════════════════
+       3. DEVELOPER TERMINAL
+    ═══════════════════════════════════════════════════════════ */
+    (function() {
+        const toggle = document.getElementById('terminal-toggle');
+        const widget = document.getElementById('terminal-widget');
+        const body   = document.getElementById('terminal-body');
+        const input  = document.getElementById('terminal-input');
+        let isOpen = false;
+        let history = [];
+        let histIdx = -1;
+
+        const commands = {
+            help: () => [
+                { cls:'accent',  text: '┌─────────────────────────────────────┐' },
+                { cls:'accent',  text: '│     ZeeDev Terminal — Available Cmds │' },
+                { cls:'accent',  text: '└─────────────────────────────────────┘' },
+                { cls:'success', text: '  help       — tampilkan perintah ini' },
+                { cls:'success', text: '  about      — tentang developer' },
+                { cls:'success', text: '  skills     — daftar teknologi' },
+                { cls:'success', text: '  projects   — list proyek' },
+                { cls:'success', text: '  contact    — info kontak' },
+                { cls:'success', text: '  social     — link sosial media' },
+                { cls:'success', text: '  clear      — bersihkan terminal' },
+                { cls:'success', text: '  theme      — toggle dark/light mode' },
+                { cls:'success', text: '  hire       — info ketersediaan' },
+                { cls:'muted',   text: '' }
+            ],
+            about: () => [
+                { cls:'accent', text: '> EL Zidane Ardyansyah' },
+                { cls:'output', text: '  Siswa SMK Telkom Malang' },
+                { cls:'output', text: '  Jurusan: Teknik Perangkat Lunak (PPLG)' },
+                { cls:'output', text: '  Spesialisasi: Web Dev · Mobile · UI/UX' },
+                { cls:'output', text: '  Status: Tersedia untuk proyek freelance' },
+                { cls:'muted',  text: '' }
+            ],
+            skills: () => [
+                { cls:'accent',  text: '> Tech Stack:' },
+                { cls:'success', text: '  Frontend  → HTML · CSS · JavaScript · React · Next.js · Tailwind' },
+                { cls:'success', text: '  Backend   → Node.js · Express · Laravel · PHP' },
+                { cls:'success', text: '  Database  → MySQL · MongoDB · PostgreSQL · Firebase' },
+                { cls:'success', text: '  Mobile    → Flutter · React Native' },
+                { cls:'success', text: '  Tools     → Git · Docker · Figma · VS Code' },
+                { cls:'muted',   text: '' }
+            ],
+            projects: () => [
+                { cls:'accent',  text: '> Proyek Unggulan:' },
+                { cls:'output',  text: '  [0] Portofolio Pribadi      — HTML · CSS · JS · Three.js' },
+                { cls:'output',  text: '  [1] Dashboard SITU          — React · Node · MongoDB' },
+                { cls:'output',  text: '  [2] Sistem Kunjungan Sekolah — Next.js · Express · MySQL' },
+                { cls:'muted',   text: '  ketik project 0/1/2 untuk detail' },
+                { cls:'muted',   text: '' }
+            ],
+            contact: () => [
+                { cls:'accent',  text: '> Kontak:' },
+                { cls:'output',  text: '  Email   → elzidaneardyansyah265@gmail.com' },
+                { cls:'output',  text: '  Phone   → +62 877 9273 5999' },
+                { cls:'output',  text: '  Lokasi  → Malang, Jawa Timur, Indonesia' },
+                { cls:'muted',   text: '' }
+            ],
+            social: () => [
+                { cls:'accent',  text: '> Social Media:' },
+                { cls:'output',  text: '  GitHub    → github.com/elzidane' },
+                { cls:'output',  text: '  Instagram → instagram.com/_elzdne' },
+                { cls:'muted',   text: '' }
+            ],
+            hire: () => [
+                { cls:'success', text: '  ✓ STATUS: TERSEDIA UNTUK PROYEK' },
+                { cls:'output',  text: '  Terbuka untuk: Freelance · Internship · Part-time' },
+                { cls:'output',  text: '  Kirim pesan via form kontak atau email langsung!' },
+                { cls:'muted',   text: '' }
+            ],
+            theme: () => {
+                document.getElementById('theme-toggle').click();
+                const isLight = document.body.getAttribute('data-theme') === 'light';
+                return [{ cls:'success', text: `  Tema diubah ke: ${isLight ? '☀ Light' : '🌙 Dark'} Mode` },{ cls:'muted', text:'' }];
+            },
+            clear: () => { body.innerHTML = ''; return []; }
+        };
+
+        function print(lines) {
+            lines.forEach(l => {
+                const el = document.createElement('div');
+                el.className = 'terminal-line ' + (l.cls||'output');
+                el.textContent = l.text;
+                body.appendChild(el);
+            });
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function printWelcome() {
+            print([
+                { cls:'accent',  text: '  ███████╗███████╗███████╗██████╗ ███████╗██╗   ██╗' },
+                { cls:'accent',  text: '      ZeeDev Interactive Terminal v1.0' },
+                { cls:'muted',   text: '  Ketik "help" untuk melihat perintah yang tersedia.' },
+                { cls:'muted',   text: '' }
+            ]);
+        }
+
+        function handleCommand(cmd) {
+            cmd = cmd.trim().toLowerCase();
+            if (!cmd) return;
+            history.unshift(cmd); histIdx = -1;
+            print([{ cls:'cmd', text: '$ ' + cmd }]);
+
+            // project detail shortcut
+            if (/^project [012]$/.test(cmd)) {
+                const idx = +cmd.split(' ')[1];
+                const cards = document.querySelectorAll('.project-card[data-modal-id]');
+                if (cards[idx]) {
+                    const event = new MouseEvent('click', { bubbles: true });
+                    cards[idx].dispatchEvent(event);
+                }
+                print([{ cls:'success', text: '  Membuka detail proyek...' },{ cls:'muted', text:'' }]);
+                return;
+            }
+
+            if (commands[cmd]) {
+                print(commands[cmd]());
+            } else {
+                print([
+                    { cls:'error', text: `  command not found: ${cmd}` },
+                    { cls:'muted', text: '  Ketik "help" untuk melihat perintah.' },
+                    { cls:'muted', text: '' }
+                ]);
+            }
+        }
+
+        toggle.addEventListener('click', () => {
+            isOpen = !isOpen;
+            if (isOpen) {
+                widget.style.display = 'flex';
+                requestAnimationFrame(() => widget.classList.add('open'));
+                if (!body.children.length) printWelcome();
+                setTimeout(() => input.focus(), 350);
+            } else {
+                widget.classList.remove('open');
+                setTimeout(() => widget.style.display = 'none', 350);
+            }
+        });
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                handleCommand(input.value);
+                input.value = '';
+            } else if (e.key === 'ArrowUp') {
+                histIdx = Math.min(histIdx + 1, history.length - 1);
+                input.value = history[histIdx] || '';
+                e.preventDefault();
+            } else if (e.key === 'ArrowDown') {
+                histIdx = Math.max(histIdx - 1, -1);
+                input.value = histIdx >= 0 ? history[histIdx] : '';
+                e.preventDefault();
+            }
+        });
+    })();
+
+    /* ═══════════════════════════════════════════════════════════
+       4. EMAILJS CONTACT FORM
+    ═══════════════════════════════════════════════════════════ */
+    (function() {
+        // Initialize EmailJS - replace with your public key from emailjs.com
+        emailjs.init('F0dnYTmCI7xr50VI6');
+
+        const form = document.getElementById('contact-form');
+        const btn  = document.getElementById('btn-send');
+        const btnText = document.getElementById('btn-send-text');
+        const btnIcon = document.getElementById('btn-send-icon');
+        const status  = document.getElementById('form-status');
+
+        if (!form) return;
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const name    = document.getElementById('f-name').value.trim();
+            const email   = document.getElementById('f-email').value.trim();
+            const subject = document.getElementById('f-subject').value.trim();
+            const message = document.getElementById('f-message').value.trim();
+
+            if (!name || !email || !subject || !message) {
+                showStatus('⚠ Semua field harus diisi.', '#f59e0b');
+                return;
+            }
+
+            // Loading state
+            btn.disabled = true;
+            btnText.textContent = 'Mengirim...';
+            btnIcon.className = 'fas fa-circle-notch fa-spin';
+
+            try {
+                const templateParams = {
+                    name:         name,
+                    email:        email,
+                    title:        subject,
+                    message:      message
+                };
+                console.log('Mengirim ke EmailJS...', templateParams);
+                const result = await emailjs.send('service_3hipg48', 'template_c3mn0tz', templateParams);
+                console.log('EmailJS sukses:', result);
+
+                // Success
+                btnText.textContent = 'Terkirim!';
+                btnIcon.className = 'fas fa-check';
+                btn.style.background = '#28c840';
+                if (typeof showNotif === 'function') {
+                    showNotif('Pesan berhasil dikirim! 🚀', 'success');
+                }
+                showStatus('✓ Pesan berhasil dikirim! Saya akan membalas segera.', '#28c840');
+                form.reset();
+            } catch (err) {
+                console.error('EmailJS error:', err);
+                btnText.textContent = 'Gagal';
+                btnIcon.className = 'fas fa-times';
+                btn.style.background = '#ff5f57';
+                if (typeof showNotif === 'function') {
+                    showNotif('Gagal mengirim pesan.', 'error');
+                }
+                showStatus('✗ Gagal mengirim. Silakan hubungi via email langsung.', '#ff6b6b');
+            }
+
+            // Reset button after 3s
+            setTimeout(() => {
+                btn.disabled = false;
+                btnText.textContent = 'Kirim Pesan';
+                btnIcon.className = 'fas fa-paper-plane';
+                btn.style.background = '';
+            }, 3000);
+        });
+
+        function showStatus(msg, color) {
+            status.textContent = msg;
+            status.style.color = color;
+            status.style.display = 'block';
+            setTimeout(() => { status.style.display = 'none'; }, 6000);
+        }
+    })();
     </script>
 </body>
 </html>
