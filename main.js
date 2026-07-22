@@ -1,81 +1,1166 @@
 document.addEventListener("DOMContentLoaded", function () {
+    /* ── SPLASH SCREEN LOADER ────────────────────────────────── */
+    const splash = document.getElementById('splash');
+    const fill = document.getElementById('splash-fill');
+    const lbl = document.getElementById('splash-label');
+    const steps = [
+        { p: 25, t: 'MENGINISIALISASI...' },
+        { p: 50, t: 'MEMUAT ASET...' },
+        { p: 75, t: 'MENYIAPKAN UI...' },
+        { p: 95, t: 'HAMPIR SELESAI...' },
+        { p: 100, t: 'SIAP!' }
+    ];
+    let si = 0;
 
-    new TypeIt("#simpleUsage", {
-        strings: "",
-        speed: 100,
-        waitUntilVisible: true,
-    }).go();
-});
-
-const listPage = ["certificatem", "project"]
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    new TypeIt("#usage", {
-        strings: "",
-        speed: 70,
-        waitUntilVisible: true,
-    }).go();
-});
-
-window.addEventListener("resize", function () {
-    var width = window.innerWidth;
-    var simpleUsageElement = document.getElementById("simpleUsage");
-    var usageElement = document.getElementById("usage");
-
-    if (width < 600) {
-        simpleUsageElement.style.fontSize = "12px";
-        usageElement.style.fontSize = "12px";
-    } else if (width < 900) {
-        simpleUsageElement.style.fontSize = "16px";
-        usageElement.style.fontSize = "16px";
-    } else {
-        simpleUsageElement.style.fontSize = "20px";
-        usageElement.style.fontSize = "20px";
+    function nextStep() {
+        if (si >= steps.length) {
+            setTimeout(() => {
+                splash.classList.add('exit');
+                setTimeout(() => splash.style.display = 'none', 700);
+                startAnimations();
+            }, 300);
+            return;
+        }
+        const s = steps[si++];
+        fill.style.width = s.p + '%';
+        lbl.textContent = s.t;
+        setTimeout(nextStep, si === steps.length ? 300 : Math.random() * 200 + 150);
     }
-});
+    
+    // Start splash loading sequences
+    setTimeout(nextStep, 200);
 
-document.addEventListener("DOMContentLoaded", function () {
-    var navbar = document.getElementById("navbar");
-    var toggleButton = document.getElementById("navbar-toggle");
-
-    toggleButton.addEventListener("click", function () {
-        if (navbar.style.display === "none" || navbar.style.display === "") {
-            navbar.style.display = "block";
-        } else {
-            navbar.style.display = "none";
+    // Skip splash on Escape key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && splash.style.display !== 'none') {
+            fill.style.width = '100%';
+            setTimeout(() => {
+                splash.classList.add('exit');
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    startAnimations();
+                }, 700);
+            }, 100);
         }
     });
-});
 
-document.addEventListener("click", function (event) {
-    var navbar = document.getElementById("navbar");
-    var toggleButton = document.getElementById("navbar-toggle");
+    /* ── SCROLL PROGRESS BAR ─────────────────────────────────── */
+    const prog = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+        const s = document.documentElement.scrollTop;
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        if (h > 0) {
+            prog.style.width = (s / h * 100) + '%';
+        }
+    });
 
-    if (event.target !== toggleButton && !toggleButton.contains(event.target) && !navbar.contains(event.target)) {
-        navbar.style.display = "none";
+    /* ── NAV SCROLL & ACTIVE LINK HIGHLIGHT ──────────────────── */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const sectionIds = ['home', 'about', 'portfolio', 'skills', 'certificates', 'experience', 'contact'];
+    const allSections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+    function updateActiveLink() {
+        const mid = window.scrollY + window.innerHeight * 0.35;
+        let activeId = allSections[0] ? allSections[0].id : '';
+        allSections.forEach(s => {
+            if (s.offsetTop <= mid) {
+                activeId = s.id;
+            }
+        });
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + activeId));
+    }
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+
+    /* ── BACK TO TOP ─────────────────────────────────────────── */
+    const btt = document.getElementById('btt');
+    window.addEventListener('scroll', () => {
+        btt.classList.toggle('visible', window.scrollY > 350);
+    });
+    btt.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* ── MOBILE MENU NAVIGATION ──────────────────────────────── */
+    const hmb = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+    const mobileClose = document.getElementById('mobile-close');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    if (hmb) {
+        hmb.addEventListener('click', () => mobileNav.classList.add('open'));
+    }
+    if (mobileClose) {
+        mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+    }
+    mobileLinks.forEach(a => {
+        a.addEventListener('click', () => mobileNav.classList.remove('open'));
+    });
+
+    /* ── SMOOTH SCROLL ANCHORS ───────────────────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const targetId = a.getAttribute('href');
+            if (targetId === '#') return;
+            const targetEl = document.querySelector(targetId);
+            if (targetEl) {
+                window.scrollTo({
+                    top: targetEl.offsetTop - 15,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    /* ── NOTIFICATION COMPONENT ──────────────────────────────── */
+    window.showNotif = function (msg, type = 'success') {
+        const el = document.getElementById('notif');
+        const icon = document.getElementById('notif-icon');
+        const msgSpan = document.getElementById('notif-msg');
+        
+        msgSpan.textContent = msg;
+        el.className = 'show ' + type;
+        icon.className = 'fas ' + (type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle');
+        
+        setTimeout(() => {
+            el.className = '';
+        }, 3000);
+    };
+
+    /* ── CV DOWNLOAD HELPER ──────────────────────────────────── */
+    const cvBtn = document.getElementById('btn-cv');
+    if (cvBtn) {
+        cvBtn.addEventListener('click', () => {
+            window.showNotif('Membuka CV ATS... 📄', 'success');
+            setTimeout(() => {
+                window.open('cv.html', '_blank');
+            }, 800);
+        });
+    }
+
+    /* ── CERTIFICATE FILTER & LIGHTBOX PREVIEW ───────────────── */
+    const certFilterBtns = document.querySelectorAll('.cert-filter-btn');
+    const certCards = document.querySelectorAll('.cert-card');
+    const certLightbox = document.getElementById('cert-lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = document.querySelector('.lightbox-close');
+
+    // Filtering logic
+    certFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            certFilterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.dataset.filter;
+
+            certCards.forEach(card => {
+                const category = card.dataset.category;
+                
+                if (filter === 'all' || category === filter) {
+                    card.classList.remove('hidden');
+                    card.style.display = 'flex';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1) translateY(0)';
+                    }, 50);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.92) translateY(12px)';
+                    setTimeout(() => {
+                        card.classList.add('hidden');
+                        card.style.display = 'none';
+                    }, 250);
+                }
+            });
+        });
+    });
+
+    // Lightbox trigger
+    certCards.forEach(card => {
+        const imgWrap = card.querySelector('.cert-img-wrap');
+        if (imgWrap) {
+            imgWrap.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const img = imgWrap.querySelector('img');
+                const title = card.querySelector('.cert-name').textContent;
+                const issuer = card.querySelector('.cert-issuer').textContent;
+                
+                if (img) {
+                    lightboxImg.src = img.src;
+                    lightboxCaption.innerHTML = `${title} <br><span style="font-size:0.82rem;font-weight:400;color:var(--accent-2);">${issuer}</span>`;
+                    certLightbox.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Lock body scroll
+                }
+            });
+        }
+    });
+
+    function closeLightboxFunc() {
+        if (certLightbox) {
+            certLightbox.classList.remove('show');
+            document.body.style.overflow = ''; // Unlock body scroll
+        }
+    }
+
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightboxFunc);
+    }
+    if (certLightbox) {
+        certLightbox.addEventListener('click', (e) => {
+            if (e.target === certLightbox || e.target.classList.contains('lightbox-close')) {
+                closeLightboxFunc();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && certLightbox.classList.contains('show')) {
+                closeLightboxFunc();
+            }
+        });
+    }
+
+    /* ── INTERSECTION OBSERVER SCROLL ANIMATIONS ──────────────── */
+    function startAnimations() {
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+        document.querySelectorAll('.fade-in, .fade-in-l, .fade-in-r, .timeline-item').forEach(el => obs.observe(el));
+        
+        // Animating progress fills
+        const pobs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.querySelectorAll('.progress-fill').forEach(bar => {
+                        bar.style.width = bar.dataset.width + '%';
+                    });
+                    pobs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.skills-progress').forEach(el => pobs.observe(el));
+
+        // Stats counter animations
+        const cobs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.querySelectorAll('.countup').forEach(el => {
+                        const target = +el.dataset.target;
+                        let cur = 0;
+                        const step = () => {
+                            cur += Math.ceil(target / 30);
+                            if (cur >= target) {
+                                el.textContent = target + '+';
+                                return;
+                            }
+                            el.textContent = cur + '+';
+                            requestAnimationFrame(step);
+                        };
+                        step();
+                    });
+                    cobs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.hero-stats').forEach(el => cobs.observe(el));
+    }
+
+    /* ── HERO TEXT TYPEWRITER ────────────────────────────────── */
+    const words = ['Fullstack Dev', 'Mobile Dev', 'UI/UX Designer', 'Problem Solver'];
+    let wi = 0, ci = 0, del = false;
+    const tw = document.getElementById('typewriter');
+    
+    function type() {
+        if (!tw) return;
+        if (del) {
+            tw.textContent = words[wi].substring(0, ci--);
+            if (ci < 0) {
+                del = false;
+                wi = (wi + 1) % words.length;
+                setTimeout(type, 350);
+                return;
+            }
+        } else {
+            tw.textContent = words[wi].substring(0, ci++);
+            if (ci > words[wi].length) {
+                del = true;
+                setTimeout(type, 1800);
+                return;
+            }
+        }
+        setTimeout(type, del ? 50 : 80);
+    }
+    setTimeout(type, 1200);
+
+    /* ── MOUSE SHIFTS & MAGNETIC CALCULATIONS ───────────────── */
+    let currentScrollY = window.scrollY;
+    let interpolatedScrollY = window.scrollY;
+    const lerpFactor = 0.08;
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let targetGridX = 0;
+    let targetGridY = 0;
+    let currentGridX = 0;
+    let currentGridY = 0;
+
+    window.addEventListener('scroll', () => {
+        currentScrollY = window.scrollY;
+    });
+
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        targetGridX = (mouseX / window.innerWidth - 0.5) * -12;
+        targetGridY = (mouseY / window.innerHeight - 0.5) * -12;
+    });
+
+    const parallaxElems = document.querySelectorAll('[data-parallax]');
+    const projectImages = document.querySelectorAll('.parallax-img');
+    const gridBg = document.querySelector('.grid-bg');
+    
+    function animationLoop() {
+        // Interpolated scroll damping
+        interpolatedScrollY += (currentScrollY - interpolatedScrollY) * lerpFactor;
+        
+        // Large outline text and orb parallax
+        const viewportCenter = window.innerHeight / 2;
+        parallaxElems.forEach(el => {
+            const speed = parseFloat(el.getAttribute('data-speed')) || 0.1;
+            const dir = el.getAttribute('data-parallax-dir') || 'y';
+            const rotate = el.getAttribute('data-rotate') || '0';
+            const parent = el.closest('section') || el.parentElement;
+            const rect = parent.getBoundingClientRect();
+            
+            const parentRelativeTop = rect.top + window.scrollY - interpolatedScrollY;
+            const parentCenter = parentRelativeTop + rect.height / 2;
+            const distanceFromCenter = parentCenter - viewportCenter;
+            const offset = distanceFromCenter * speed;
+            
+            if (dir === 'x') {
+                el.style.transform = `translate3d(${offset}px, 0, 0) rotate(${rotate}deg)`;
+            } else {
+                el.style.transform = `translate3d(0, ${offset}px, 0) rotate(${rotate}deg)`;
+            }
+        });
+
+        // Project images vertical perspective shifting
+        projectImages.forEach(img => {
+            const rect = img.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+            const percentVisible = (rect.top + rect.height) / (viewHeight + rect.height);
+            const yOffset = (percentVisible - 0.5) * 20;
+            img.style.transform = `scale(1.1) translate3d(0, ${yOffset}px, 0)`;
+        });
+
+        // Grid background shift
+        if (gridBg) {
+            currentGridX += (targetGridX - currentGridX) * 0.08;
+            currentGridY += (targetGridY - currentGridY) * 0.08;
+            gridBg.style.transform = `translate3d(${currentGridX}px, ${currentGridY}px, 0)`;
+        }
+
+        updateMagneticButtons();
+        requestAnimationFrame(animationLoop);
+    }
+    requestAnimationFrame(animationLoop);
+
+    /* ── CARD TILT & GLARE EFFECT ───────────────────────────── */
+    const tiltCards = document.querySelectorAll('.project-card, .skill-card');
+    
+    tiltCards.forEach(card => {
+        const glare = card.querySelector('.card-glare');
+        
+        card.addEventListener('mousemove', e => {
+            if (window.innerWidth < 768) return; // Disable tilt on mobile
+            
+            const rect = card.getBoundingClientRect();
+            const cardX = e.clientX - rect.left;
+            const cardY = e.clientY - rect.top;
+            
+            const x = cardX / rect.width - 0.5;
+            const y = cardY / rect.height - 0.5;
+            
+            const rotateX = -y * 8; // Refined max tilt (8 degrees)
+            const rotateY = x * 8;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+            
+            if (glare) {
+                const glareX = (cardX / rect.width) * 100;
+                const glareY = (cardY / rect.height) * 100;
+                card.style.setProperty('--glare-x', `${glareX}%`);
+                card.style.setProperty('--glare-y', `${glareY}%`);
+            }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+    });
+
+    /* ── MAGNETIC ATTRACTION ON BUTTONS ──────────────────────── */
+    const magneticBtns = document.querySelectorAll('.btn-primary, .btn-ghost, #hamburger');
+    const magIntensity = 0.25; // Subtler snap intensity
+    const magRadius = 45; 
+
+    const buttonStates = new Map();
+    magneticBtns.forEach(btn => {
+        buttonStates.set(btn, { x: 0, y: 0 });
+    });
+
+    function updateMagneticButtons() {
+        if (window.innerWidth < 1024) {
+            magneticBtns.forEach(btn => btn.style.transform = '');
+            return;
+        }
+
+        magneticBtns.forEach(btn => {
+            const state = buttonStates.get(btn);
+            if (!state) return;
+
+            const rect = btn.getBoundingClientRect();
+            const btnCenterX = rect.left + rect.width / 2;
+            const btnCenterY = rect.top + rect.height / 2;
+
+            const dx = mouseX - btnCenterX;
+            const dy = mouseY - btnCenterY;
+            const distance = Math.hypot(dx, dy);
+
+            let targetX = 0;
+            let targetY = 0;
+
+            if (distance < magRadius) {
+                const pullPower = (magRadius - distance) / magRadius;
+                targetX = dx * pullPower * magIntensity;
+                targetY = dy * pullPower * magIntensity;
+            }
+
+            state.x += (targetX - state.x) * 0.12;
+            state.y += (targetY - state.y) * 0.12;
+
+            btn.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+        });
+    }
+
+    /* ── HERO 3D MOUSE PARALLAX ──────────────────────────────── */
+    const heroSection = document.getElementById('home');
+    const heroImageSide = document.querySelector('.hero-image-side');
+    const mainFrame = document.querySelector('.hero-img-frame');
+    const badgeTop = document.querySelector('.badge-top');
+    const badgeBottom = document.querySelector('.badge-bottom');
+    const ft1 = document.querySelector('.ft-1');
+    const ft2 = document.querySelector('.ft-2');
+    const ft3 = document.querySelector('.ft-3');
+
+    if (heroSection && heroImageSide) {
+        heroSection.addEventListener('mousemove', e => {
+            if (window.innerWidth < 1024) return;
+            
+            const rect = heroSection.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            
+            const rotateX = -y * 8; // Refined tilt angles
+            const rotateY = x * 8;
+            heroImageSide.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            
+            if (mainFrame) mainFrame.style.transform = `translateZ(20px) translate3d(${x * 8}px, ${y * 8}px, 0)`;
+            if (badgeTop) badgeTop.style.transform = `translateZ(50px) translate3d(${x * 20}px, ${y * 20}px, 0) translateX(10px) translateY(-5px)`;
+            if (badgeBottom) badgeBottom.style.transform = `translateZ(40px) translate3d(${x * 16}px, ${y * 16}px, 0) translateX(-10px) translateY(5px)`;
+            if (ft1) ft1.style.transform = `translateZ(60px) translate3d(${x * -25}px, ${y * -25}px, 0) rotate(-10deg)`;
+            if (ft2) ft2.style.transform = `translateZ(80px) translate3d(${x * -32}px, ${y * -32}px, 0) rotate(15deg)`;
+            if (ft3) ft3.style.transform = `translateZ(50px) translate3d(${x * -20}px, ${y * -20}px, 0) rotate(5deg)`;
+        });
+        
+        heroSection.addEventListener('mouseleave', () => {
+            heroImageSide.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg)';
+            if (mainFrame) mainFrame.style.transform = 'translateZ(20px) translate3d(0, 0, 0)';
+            if (badgeTop) badgeTop.style.transform = 'translateZ(50px) translate3d(0, 0, 0) translateX(10px) translateY(-5px)';
+            if (badgeBottom) badgeBottom.style.transform = 'translateZ(40px) translate3d(0, 0, 0) translateX(-10px) translateY(5px)';
+            if (ft1) ft1.style.transform = 'translateZ(60px) translate3d(0, 0, 0) rotate(-10deg)';
+            if (ft2) ft2.style.transform = 'translateZ(80px) translate3d(0, 0, 0) rotate(15deg)';
+            if (ft3) ft3.style.transform = 'translateZ(50px) translate3d(0, 0, 0) rotate(5deg)';
+        });
+    }
+
+    /* ── THREE.JS BACKGROUND PARTICLES ───────────────────────── */
+    const canvas = document.getElementById('three-canvas');
+    if (canvas && typeof THREE !== 'undefined') {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const geometry = new THREE.BufferGeometry();
+        const particlesCount = 700; // Subtler particle count
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 80;
+        }
+        
+        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const material = new THREE.PointsMaterial({
+            size: 0.07,
+            color: 0x00e5c3,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const particlesMesh = new THREE.Points(geometry, material);
+        scene.add(particlesMesh);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.dispatchEvent(new Event('resize'));
+        const clock = new THREE.Clock();
+        
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const elapsedTime = clock.getElapsedTime();
+
+            particlesMesh.rotation.y = elapsedTime * 0.04;
+            const scrollInfluence = (typeof interpolatedScrollY !== 'undefined' ? interpolatedScrollY : window.scrollY) * 0.0008;
+            particlesMesh.rotation.x = scrollInfluence * 0.4;
+            
+            const mouseXInfluence = (typeof mouseX !== 'undefined' ? (mouseX / window.innerWidth - 0.5) : 0) * 4;
+            const mouseYInfluence = (typeof mouseY !== 'undefined' ? (mouseY / window.innerHeight - 0.5) : 0) * 4;
+            
+            const targetX = mouseXInfluence;
+            const targetY = (scrollInfluence * 5) - mouseYInfluence;
+
+            particlesMesh.position.x += (targetX - particlesMesh.position.x) * 0.05;
+            particlesMesh.position.y += (targetY - particlesMesh.position.y) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+        animate3D();
     }
 });
 
+/* ─── EMAILJS & SYNCED INTERFACE CONTROLLERS ─────────────── */
+(function() {
+    /* ═══════════════════════════════════════════════════════════
+       1. DARK / LIGHT MODE TOGGLE
+    ═══════════════════════════════════════════════════════════ */
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById('theme-toggle');
+        if (!btn) return;
+        const icon = btn.querySelector('i');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        
+        function updateGithubCards() {
+            const statsCard = document.getElementById('github-stats-card');
+            const langsCard = document.getElementById('github-langs-card');
+            if (!statsCard || !langsCard) return;
 
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                statsCard.src = "https://github-readme-stats.vercel.app/api?username=elzidane&show_icons=true&bg_color=eaebf2&title_color=5b7fff&icon_color=00e5c3&text_color=181a24&hide_border=true";
+                langsCard.src = "https://github-readme-stats.vercel.app/api/top-langs/?username=elzidane&layout=compact&bg_color=eaebf2&title_color=5b7fff&text_color=181a24&hide_border=true";
+            } else {
+                statsCard.src = "https://github-readme-stats.vercel.app/api?username=elzidane&show_icons=true&theme=dark&bg_color=0c0e16&title_color=5b7fff&icon_color=00e5c3&text_color=dde0ea&hide_border=true";
+                langsCard.src = "https://github-readme-stats.vercel.app/api/top-langs/?username=elzidane&layout=compact&theme=dark&bg_color=0c0e16&title_color=5b7fff&text_color=dde0ea&hide_border=true";
+            }
+        }
 
-function project() {
-    document.getElementById('hide2').style.display = 'none';
-    document.getElementById('hide3').style.display = 'none';
-    document.getElementById('hide1').style.display = 'block';
-}
+        if (savedTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            icon.className = 'fas fa-sun';
+        }
+        updateGithubCards();
+        
+        btn.addEventListener('click', () => {
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.body.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'dark');
+                if (window.playThemeChime) window.playThemeChime(false);
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'light');
+                if (window.playThemeChime) window.playThemeChime(true);
+            }
 
-function certif() {
-    document.getElementById('hide2').style.display = 'block';
-    document.getElementById('hide1').style.display = 'none';
-    document.getElementById('hide3').style.display = 'none';
-}
+            // Update github cards theme
+            updateGithubCards();
 
+            // Sync skills chart text color on theme update
+            if (window.skillsChart) {
+                const updatedIsLight = document.body.getAttribute('data-theme') === 'light';
+                const labelColor = updatedIsLight ? '#1a1d2e' : '#e8eaf0';
+                window.skillsChart.options.scales.r.pointLabels.color = labelColor;
+                window.skillsChart.update();
+            }
+        });
+    });
 
-function tech() {
-    document.getElementById('hide2').style.display = 'none';
-    document.getElementById('hide3').style.display = 'block';
-    document.getElementById('hide1').style.display = 'none';
-}
+    /* ═══════════════════════════════════════════════════════════
+       2. PROJECT DETAIL MODAL DATA
+    ═══════════════════════════════════════════════════════════ */
+    const projectsData = [
+        {
+            title: 'Portofolio Pribadi',
+            tag: 'WEB',
+            img: 'asset/port.png',
+            desc: 'Website portofolio modern yang dibangun dari nol dengan HTML, CSS, dan JavaScript murni. Menampilkan animasi premium, desain responsif, dan pengalaman interaktif yang memukau — tanpa framework UI.',
+            features: [
+                'Splash screen animasi dengan loading bar',
+                'Efek tilt 3D pada kartu proyek & skill',
+                'Parallax scrolling multi-layer',
+                'Typewriter effect pada headline hero',
+                'Animasi partikel 3D dengan Three.js',
+                'Sertifikat dengan filter kategori & lightbox'
+            ],
+            tech: ['HTML5','CSS3','JavaScript','Three.js','Font Awesome'],
+            live: 'https://personal-portfolio-five-indol-45.vercel.app/',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Dashboard SITU',
+            tag: 'WEB',
+            img: 'asset/Dashboard Situ.png',
+            desc: 'Dashboard sistem informasi administrasi sekolah lengkap. Menyediakan manajemen data siswa, guru, mata pelajaran, dan laporan akademik dalam satu antarmuka terpadu yang intuitif.',
+            features: [
+                'Autentikasi pengguna multi-role (Admin, Guru, Siswa)',
+                'CRUD data siswa, guru & mata pelajaran',
+                'Dashboard analitik dengan chart interaktif',
+                'Manajemen absensi dan nilai',
+                'Export laporan ke PDF & Excel',
+                'Desain responsif untuk semua perangkat'
+            ],
+            tech: ['React','Node.js','MongoDB','Express','Chart.js','JWT'],
+            live: 'https://dashboard-situ.vercel.app/',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Sistem Kunjungan Sekolah',
+            tag: 'FULLSTACK',
+            img: 'asset/webkunjungan1.png',
+            desc: 'Platform digital untuk pendaftaran dan manajemen kunjungan industri sekolah. Memudahkan koordinasi antara siswa, guru pembimbing, dan pihak industri dengan alur kerja yang terstruktur.',
+            features: [
+                'Formulir pendaftaran kunjungan online',
+                'Panel admin untuk approval dan tracking',
+                'Notifikasi real-time status pendaftaran',
+                'Manajemen kapasitas per sesi kunjungan',
+                'Laporan dan statistik kunjungan',
+                'QR code check-in untuk peserta'
+            ],
+            tech: ['Next.js','Express','MySQL','Prisma','Tailwind CSS','JWT'],
+            live: 'https://moklet-visit.vercel.app/',
+            github: 'https://github.com/elzidane'
+        }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.getElementById('project-modal-overlay');
+        const closeBtn = document.getElementById('project-modal-close');
+        if (!overlay) return;
+
+        function openModal(idx) {
+            const d = projectsData[idx];
+            if (!d) return;
+            document.getElementById('modal-img').src = d.img;
+            document.getElementById('modal-img').alt = d.title;
+            document.getElementById('modal-tag').textContent = d.tag;
+            document.getElementById('modal-title').textContent = d.title;
+            document.getElementById('modal-desc').textContent = d.desc;
+            const fl = document.getElementById('modal-features');
+            fl.innerHTML = d.features.map(f => `<li>${f}</li>`).join('');
+            const tl = document.getElementById('modal-tech');
+            tl.innerHTML = d.tech.map(t => `<span class="tech-pill">${t}</span>`).join('');
+            document.getElementById('modal-live-link').href = d.live;
+            document.getElementById('modal-github-link').href = d.github;
+            
+            overlay.style.display = 'flex';
+            requestAnimationFrame(() => overlay.classList.add('open'));
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            overlay.classList.remove('open');
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = ''; 
+            }, 300);
+        }
+
+        document.querySelectorAll('.project-card[data-modal-id]').forEach(card => {
+            card.addEventListener('click', e => {
+                if (e.target.closest('a')) return; // let buttons trigger links directly
+                openModal(+card.dataset.modalId);
+            });
+        });
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+    });
+
+    /* ═══════════════════════════════════════════════════════════
+       3. DEVELOPER TERMINAL INTERACTIVE SHELL
+    ═══════════════════════════════════════════════════════════ */
+    document.addEventListener("DOMContentLoaded", () => {
+        const toggle = document.getElementById('terminal-toggle');
+        const widget = document.getElementById('terminal-widget');
+        const body   = document.getElementById('terminal-body');
+        const input  = document.getElementById('terminal-input');
+        if (!toggle || !widget || !body || !input) return;
+
+        let isOpen = false;
+        let history = [];
+        let histIdx = -1;
+
+        const commands = {
+            help: () => [
+                { cls:'accent',  text: '┌─────────────────────────────────────┐' },
+                { cls:'accent',  text: '│     ZeeDev Terminal — Available Cmds │' },
+                { cls:'accent',  text: '└─────────────────────────────────────┘' },
+                { cls:'success', text: '  help       — tampilkan perintah ini' },
+                { cls:'success', text: '  about      — tentang developer' },
+                { cls:'success', text: '  skills     — daftar teknologi' },
+                { cls:'success', text: '  projects   — list proyek' },
+                { cls:'success', text: '  contact    — info kontak' },
+                { cls:'success', text: '  social     — link sosial media' },
+                { cls:'success', text: '  clear      — bersihkan terminal' },
+                { cls:'success', text: '  theme      — toggle dark/light mode' },
+                { cls:'success', text: '  hire       — info ketersediaan' },
+                { cls: 'muted',  text: '' }
+            ],
+            about: () => [
+                { cls:'accent', text: '> EL Zidane Ardyansyah' },
+                { cls:'output', text: '  Siswa SMK Telkom Malang' },
+                { cls:'output', text: '  Jurusan: Teknik Perangkat Lunak (PPLG)' },
+                { cls:'output', text: '  Spesialisasi: Web Dev · Mobile · UI/UX' },
+                { cls:'output', text: '  Status: Tersedia untuk proyek freelance' },
+                { cls:'muted',  text: '' }
+            ],
+            skills: () => [
+                { cls:'accent',  text: '> Tech Stack:' },
+                { cls:'success', text: '  Frontend  → HTML · CSS · JavaScript · React · Next.js · Tailwind' },
+                { cls:'success', text: '  Backend   → Node.js · Express · Laravel · PHP' },
+                { cls:'success', text: '  Database  → MySQL · MongoDB · PostgreSQL · Firebase' },
+                { cls:'success', text: '  Mobile    → Flutter · React Native' },
+                { cls:'success', text: '  Tools     → Git · Docker · Figma · VS Code' },
+                { cls:'muted',   text: '' }
+            ],
+            projects: () => [
+                { cls:'accent',  text: '> Proyek Unggulan:' },
+                { cls:'output',  text: '  [0] Portofolio Pribadi      — HTML · CSS · JS · Three.js' },
+                { cls:'output',  text: '  [1] Dashboard SITU          — React · Node · MongoDB' },
+                { cls:'output',  text: '  [2] Sistem Kunjungan Sekolah — Next.js · Express · MySQL' },
+                { cls:'muted',   text: '  ketik project 0/1/2 untuk detail' },
+                { cls:'muted',   text: '' }
+            ],
+            contact: () => [
+                { cls:'accent',  text: '> Kontak:' },
+                { cls:'output',  text: '  Email   → elzidaneardyansyah265@gmail.com' },
+                { cls:'output',  text: '  Phone   → +62 877 9273 5999' },
+                { cls:'output',  text: '  Lokasi  → Malang, Jawa Timur, Indonesia' },
+                { cls:'muted',   text: '' }
+            ],
+            social: () => [
+                { cls:'accent',  text: '> Social Media:' },
+                { cls:'output',  text: '  GitHub    → github.com/elzidane' },
+                { cls:'output',  text: '  Instagram → instagram.com/_elzdne' },
+                { cls:'muted',   text: '' }
+            ],
+            hire: () => [
+                { cls:'success', text: '  ✓ STATUS: TERSEDIA UNTUK PROYEK' },
+                { cls:'output',  text: '  Terbuka untuk: Freelance · Internship · Part-time' },
+                { cls:'output',  text: '  Kirim pesan via form kontak atau email langsung!' },
+                { cls:'muted',   text: '' }
+            ],
+            theme: () => {
+                const themeBtn = document.getElementById('theme-toggle');
+                if (themeBtn) themeBtn.click();
+                const isLight = document.body.getAttribute('data-theme') === 'light';
+                return [{ cls:'success', text: `  Tema diubah ke: ${isLight ? '☀ Light' : '🌙 Dark'} Mode` },{ cls:'muted', text:'' }];
+            },
+            clear: () => { body.innerHTML = ''; return []; }
+        };
+
+        function print(lines) {
+            lines.forEach(l => {
+                const el = document.createElement('div');
+                el.className = 'terminal-line ' + (l.cls||'output');
+                el.textContent = l.text;
+                body.appendChild(el);
+            });
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function printWelcome() {
+            print([
+                { cls:'accent',  text: '  ███████╗███████╗███████╗██████╗ ███████╗██╗   ██╗' },
+                { cls:'accent',  text: '      ZeeDev Interactive Terminal v1.0' },
+                { cls:'muted',   text: '  Ketik "help" untuk melihat perintah yang tersedia.' },
+                { cls:'muted',   text: '' }
+            ]);
+        }
+
+        function handleCommand(cmd) {
+            cmd = cmd.trim();
+            if (!cmd) return;
+            history.unshift(cmd);
+            histIdx = -1;
+            print([{ cls:'cmd', text: '$ ' + cmd }]);
+
+            const lowerCmd = cmd.toLowerCase();
+
+            // Match project detail shortcut
+            if (/^project [012]$/.test(lowerCmd)) {
+                const idx = +lowerCmd.split(' ')[1];
+                const cards = document.querySelectorAll('.project-card[data-modal-id]');
+                if (cards[idx]) {
+                    const event = new MouseEvent('click', { bubbles: true });
+                    cards[idx].dispatchEvent(event);
+                }
+                print([{ cls:'success', text: '  Membuka detail proyek...' },{ cls:'muted', text:'' }]);
+                if (window.playTone) window.playTone(880, 'sine', 0.03, 0.04);
+                return;
+            }
+
+            if (commands[lowerCmd]) {
+                print(commands[lowerCmd]());
+                if (window.playTone) window.playTone(880, 'sine', 0.03, 0.04);
+            } else {
+                print([
+                    { cls:'error', text: `  command not found: ${cmd}` },
+                    { cls:'muted', text: '  Ketik "help" untuk melihat perintah.' },
+                    { cls:'muted', text: '' }
+                ]);
+                if (window.playTone) window.playTone(220, 'triangle', 0.03, 0.08); // Error tone
+            }
+        }
+
+        toggle.addEventListener('click', () => {
+            isOpen = !isOpen;
+            if (isOpen) {
+                widget.style.display = 'flex';
+                requestAnimationFrame(() => widget.classList.add('open'));
+                if (!body.children.length) printWelcome();
+                setTimeout(() => input.focus(), 250);
+            } else {
+                widget.classList.remove('open');
+                setTimeout(() => widget.style.display = 'none', 300);
+            }
+        });
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                handleCommand(input.value);
+                input.value = '';
+            } else if (e.key === 'ArrowUp') {
+                histIdx = Math.min(histIdx + 1, history.length - 1);
+                input.value = history[histIdx] || '';
+                e.preventDefault();
+            } else if (e.key === 'ArrowDown') {
+                histIdx = Math.max(histIdx - 1, -1);
+                input.value = histIdx >= 0 ? history[histIdx] : '';
+                e.preventDefault();
+            }
+        });
+    });
+
+    /* ═══════════════════════════════════════════════════════════
+       4. EMAILJS FORM SUBMISSION
+    ═══════════════════════════════════════════════════════════ */
+    document.addEventListener("DOMContentLoaded", () => {
+        emailjs.init('F0dnYTmCI7xr50VI6');
+
+        const form = document.getElementById('contact-form');
+        const btn  = document.getElementById('btn-send');
+        const btnText = document.getElementById('btn-send-text');
+        const btnIcon = document.getElementById('btn-send-icon');
+        const status  = document.getElementById('form-status');
+
+        if (!form || !btn) return;
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const name    = document.getElementById('f-name').value.trim();
+            const email   = document.getElementById('f-email').value.trim();
+            const subject = document.getElementById('f-subject').value.trim();
+            const message = document.getElementById('f-message').value.trim();
+
+            if (!name || !email || !subject || !message) {
+                showStatus('⚠ Semua field harus diisi.', '#f59e0b');
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.textContent = 'Mengirim...';
+            btnIcon.className = 'fas fa-circle-notch fa-spin';
+
+            try {
+                const templateParams = {
+                    name: name,
+                    email: email,
+                    title: subject,
+                    message: message
+                };
+                await emailjs.send('service_3hipg48', 'template_c3mn0tz', templateParams);
+
+                btnText.textContent = 'Terkirim!';
+                btnIcon.className = 'fas fa-check';
+                btn.style.background = '#28c840';
+                
+                if (typeof window.showNotif === 'function') {
+                    window.showNotif('Pesan berhasil dikirim! 🚀', 'success');
+                }
+                showStatus('✓ Pesan terkirim! Saya akan membalas segera.', '#28c840');
+                form.reset();
+            } catch (err) {
+                console.error('EmailJS error:', err);
+                btnText.textContent = 'Gagal';
+                btnIcon.className = 'fas fa-times';
+                btn.style.background = '#ff5f57';
+                
+                if (typeof window.showNotif === 'function') {
+                    window.showNotif('Gagal mengirim pesan.', 'error');
+                }
+                showStatus('✗ Gagal mengirim. Silakan hubungi via email langsung.', '#ff6b6b');
+            }
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btnText.textContent = 'Kirim Pesan';
+                btnIcon.className = 'fas fa-paper-plane';
+                btn.style.background = '';
+            }, 3000);
+        });
+
+        function showStatus(msg, color) {
+            if (!status) return;
+            status.textContent = msg;
+            status.style.color = color;
+            status.style.display = 'block';
+            setTimeout(() => { status.style.display = 'none'; }, 5000);
+        }
+    });
+
+    /* ═══════════════════════════════════════════════════════════
+       5. PREMIUM AUDIO SYNTH FEEDBACK (WEB AUDIO API)
+    ═══════════════════════════════════════════════════════════ */
+    let audioCtx = null;
+    let isMuted = localStorage.getItem('audio_muted') !== 'false'; // default to muted for UX guidelines
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const audioToggle = document.getElementById('audio-toggle');
+        if (!audioToggle) return;
+        const audioIcon = audioToggle.querySelector('i');
+
+        if (!isMuted) {
+            audioIcon.className = 'fas fa-volume-up';
+            audioToggle.classList.add('active');
+        } else {
+            audioIcon.className = 'fas fa-volume-mute';
+            audioToggle.classList.remove('active');
+        }
+
+        audioToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            localStorage.setItem('audio_muted', isMuted);
+            
+            if (!isMuted) {
+                audioIcon.className = 'fas fa-volume-up';
+                audioToggle.classList.add('active');
+                initAudioContext();
+                playTone(523.25, 'sine', 0.04, 0.08); // Startup chime C5 (subtle)
+            } else {
+                audioIcon.className = 'fas fa-volume-mute';
+                audioToggle.classList.remove('active');
+            }
+        });
+    });
+
+    function initAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playTone(freq, type, volume, duration) {
+        if (isMuted) return;
+        try {
+            initAudioContext();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+    }
+    window.playTone = playTone;
+
+    function playTypewriterSound() {
+        if (isMuted) return;
+        try {
+            initAudioContext();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            const pitch = 950 + Math.random() * 300; 
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+            
+            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime); // Lower volume (0.02)
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.015); // Shorter duration
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.015);
+        } catch (e) {}
+    }
+
+    function playHoverSound() {
+        playTone(1000, 'sine', 0.006, 0.02); // Premium quick haptic beep (0.006 vol, 0.02 sec)
+    }
+
+    function playClickSound() {
+        playTone(700, 'sine', 0.04, 0.06); // Crisp click (0.04 vol, 0.06 sec)
+    }
+
+    function playThemeChime(isToLight) {
+        if (isMuted) return;
+        try {
+            if (isToLight) {
+                playTone(523.25, 'sine', 0.02, 0.08);
+                setTimeout(() => playTone(659.25, 'sine', 0.02, 0.08), 60);
+                setTimeout(() => playTone(783.99, 'sine', 0.02, 0.12), 120);
+            } else {
+                playTone(783.99, 'sine', 0.02, 0.08);
+                setTimeout(() => playTone(659.25, 'sine', 0.02, 0.08), 60);
+                setTimeout(() => playTone(523.25, 'sine', 0.02, 0.12), 120);
+            }
+        } catch (e) {}
+    }
+    window.playThemeChime = playThemeChime;
+
+    // Attach synth listeners to inputs and hoverables
+    document.addEventListener("DOMContentLoaded", () => {
+        const termInput = document.getElementById('terminal-input');
+        if (termInput) {
+            termInput.addEventListener('keydown', (e) => {
+                if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter') {
+                    playTypewriterSound();
+                }
+            });
+        }
+
+        const clickables = document.querySelectorAll('a, button, .project-card, .skill-card, .cert-filter-btn');
+        clickables.forEach(el => {
+            if (el.id === 'terminal-input' || el.id === 'audio-toggle') return;
+            el.addEventListener('mouseenter', playHoverSound);
+            el.addEventListener('click', playClickSound);
+        });
+    });
+
+    /* ═══════════════════════════════════════════════════════════
+       6. SKILLS RADAR CHART COMPONENT (CHART.JS)
+    ═══════════════════════════════════════════════════════════ */
+    document.addEventListener("DOMContentLoaded", () => {
+        const chartCanvas = document.getElementById('skills-radar-chart');
+        if (!chartCanvas || typeof Chart === 'undefined') return;
+
+        const isLight = document.body.getAttribute('data-theme') === 'light';
+        const labelColor = isLight ? '#1a1d2e' : '#e8eaf0';
+        const gridColor = 'rgba(255, 255, 255, 0.06)';
+
+        window.skillsChart = new Chart(chartCanvas, {
+            type: 'radar',
+            data: {
+                labels: ['Frontend', 'Backend', 'Mobile Dev', 'UI/UX Design', 'Database', 'Git / Tools'],
+                datasets: [{
+                    label: 'Tingkat Penguasaan',
+                    data: [85, 70, 90, 80, 75, 85],
+                    backgroundColor: 'rgba(91, 127, 255, 0.12)',
+                    borderColor: '#5b7fff',
+                    pointBackgroundColor: '#00e5c3',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#00e5c3',
+                    borderWidth: 1.5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: gridColor
+                        },
+                        grid: {
+                            color: gridColor
+                        },
+                        pointLabels: {
+                            color: labelColor,
+                            font: {
+                                family: "'DM Sans', sans-serif",
+                                size: 10,
+                                weight: '500'
+                            }
+                        },
+                        ticks: {
+                            display: false,
+                            maxTicksLimit: 4
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#0b0d14',
+                        titleFont: { family: "'Syne', sans-serif" },
+                        bodyFont: { family: "'DM Sans', sans-serif" },
+                        borderColor: 'rgba(91,127,255,0.15)',
+                        borderWidth: 1
+                    }
+                }
+            }
+        });
+    });
+})();
