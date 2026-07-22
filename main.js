@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /* ── HERO TEXT TYPEWRITER ────────────────────────────────── */
-    const words = ['Fullstack Dev', 'Mobile Dev', 'UI/UX Designer', 'Problem Solver'];
+    const words = ['Web Developer', 'Mobile Developer', 'UI/UX Designer', 'Fullstack Dev'];
     let wi = 0, ci = 0, del = false;
     const tw = document.getElementById('typewriter');
     
@@ -623,54 +623,71 @@ document.addEventListener("DOMContentLoaded", function () {
     ═══════════════════════════════════════════════════════════ */
     const projectsData = [
         {
-            title: 'Portofolio Pribadi',
+            title: 'EazyChise',
             tag: 'WEB',
-            img: 'asset/port.png',
-            desc: 'Website portofolio modern yang dibangun dari nol dengan HTML, CSS, dan JavaScript murni. Menampilkan animasi premium, desain responsif, dan pengalaman interaktif yang memukau — tanpa framework UI.',
+            img: 'asset/Screenshot 2025-03-30 002433.png',
+            desc: 'Platform marketplace waralaba responsif yang membantu mitra bisnis memperluas jaringan franchise mereka secara digital. Dibangun dari desain hingga deployment dengan performa tinggi dan fitur autentikasi lengkap.',
             features: [
-                'Splash screen animasi dengan loading bar',
-                'Efek tilt 3D pada kartu proyek & skill',
-                'Parallax scrolling multi-layer',
-                'Typewriter effect pada headline hero',
-                'Animasi partikel 3D dengan Three.js',
-                'Sertifikat dengan filter kategori & lightbox'
+                'Autentikasi pengguna berbasis Supabase (sign up, sign in, session)',
+                'Pencarian multi-kategori franchise dengan filter canggih',
+                'Kalkulator simulasi keuntungan bisnis interaktif',
+                'Formulir digital pendaftaran mitra berbasis Supabase',
+                'Desain responsif dengan Tailwind CSS & Framer Motion',
+                'Deployment otomatis via Vercel CI/CD'
             ],
-            tech: ['HTML5','CSS3','JavaScript','Three.js','Font Awesome'],
-            live: 'https://personal-portfolio-five-indol-45.vercel.app/',
+            tech: ['Next.js','TypeScript','Tailwind CSS','Supabase','Vercel','Framer Motion'],
+            live: '#',
             github: 'https://github.com/elzidane'
         },
         {
-            title: 'Dashboard SITU',
-            tag: 'WEB',
-            img: 'asset/Dashboard Situ.png',
-            desc: 'Dashboard sistem informasi administrasi sekolah lengkap. Menyediakan manajemen data siswa, guru, mata pelajaran, dan laporan akademik dalam satu antarmuka terpadu yang intuitif.',
+            title: 'Monsef — Pencatat Keuangan',
+            tag: 'MOBILE',
+            img: 'asset/UIUX PETSHOP MOBILE APP.png',
+            desc: 'Aplikasi pencatat keuangan mobile multiplatform dengan teknologi AI terkini. Memungkinkan pengguna mencatat transaksi lewat scan struk (OCR), suara (Speech-to-Text), atau input manual — dibangun dari nol hingga produksi.',
             features: [
-                'Autentikasi pengguna multi-role (Admin, Guru, Siswa)',
-                'CRUD data siswa, guru & mata pelajaran',
-                'Dashboard analitik dengan chart interaktif',
-                'Manajemen absensi dan nilai',
-                'Export laporan ke PDF & Excel',
-                'Desain responsif untuk semua perangkat'
+                'Scan struk otomatis dengan integrasi OCR API',
+                'Input transaksi via Speech-to-Text',
+                'Sinkronisasi data cloud real-time dengan Supabase',
+                'Dashboard analitik pengeluaran & pemasukan',
+                'Antarmuka mobile-first yang smooth & responsif',
+                'Multi-platform: Android & iOS (Flutter)'
             ],
-            tech: ['React','Node.js','MongoDB','Express','Chart.js','JWT'],
-            live: 'https://dashboard-situ.vercel.app/',
+            tech: ['Flutter','Dart','Supabase','OCR API','Speech-to-Text'],
+            live: '#',
             github: 'https://github.com/elzidane'
         },
         {
-            title: 'Sistem Kunjungan Sekolah',
-            tag: 'FULLSTACK',
+            title: 'HaloAir — Manajemen PDAM',
+            tag: 'MOBILE',
             img: 'asset/webkunjungan1.png',
-            desc: 'Platform digital untuk pendaftaran dan manajemen kunjungan industri sekolah. Memudahkan koordinasi antara siswa, guru pembimbing, dan pihak industri dengan alur kerja yang terstruktur.',
+            desc: 'Aplikasi mobile manajemen layanan PDAM dengan arsitektur multi-role untuk keamanan hak akses. Admin dapat mengelola data pelanggan dan tagihan secara real-time, sementara user dapat memantau tagihan dan status layanan mereka.',
             features: [
-                'Formulir pendaftaran kunjungan online',
-                'Panel admin untuk approval dan tracking',
-                'Notifikasi real-time status pendaftaran',
-                'Manajemen kapasitas per sesi kunjungan',
-                'Laporan dan statistik kunjungan',
-                'QR code check-in untuk peserta'
+                'Arsitektur Multi-Role (Admin & User) dengan hak akses terpisah',
+                'Manajemen tagihan air real-time via RESTful API',
+                'Sinkronisasi data operasional pelanggan',
+                'Notifikasi tagihan dan status pembayaran',
+                'Riwayat penggunaan air per periode',
+                'Pengujian API komprehensif dengan Postman & Git'
             ],
-            tech: ['Next.js','Express','MySQL','Prisma','Tailwind CSS','JWT'],
-            live: 'https://moklet-visit.vercel.app/',
+            tech: ['Flutter','Dart','REST API','Postman','Git'],
+            live: '#',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'PortaTrip — UI/UX Design',
+            tag: 'UI/UX',
+            img: 'asset/Dashboard Situ.png',
+            desc: 'Desain UI/UX komprehensif untuk platform aplikasi wisata dan pemesanan porter guide. Dimulai dari riset pengguna, user flow, wireframe, hingga interactive prototype yang siap diuji.',
+            features: [
+                'User Flow & Information Architecture lengkap',
+                'Wireframe detail seluruh halaman aplikasi',
+                'Interactive Prototype di Figma untuk user testing',
+                'Desain sistem komponen yang konsisten',
+                'Mind mapping & diagram alur dengan Whimsical',
+                'Fokus pada UX intuitif untuk wisatawan'
+            ],
+            tech: ['Figma','Whimsical','UI/UX Design','Prototyping','User Research'],
+            live: '#',
             github: 'https://github.com/elzidane'
         }
     ];
@@ -753,26 +770,28 @@ document.addEventListener("DOMContentLoaded", function () {
             about: () => [
                 { cls:'accent', text: '> EL Zidane Ardyansyah' },
                 { cls:'output', text: '  Siswa SMK Telkom Malang' },
-                { cls:'output', text: '  Jurusan: Teknik Perangkat Lunak (PPLG)' },
+                { cls:'output', text: '  Jurusan: Rekayasa Perangkat Lunak | 2024-2027' },
                 { cls:'output', text: '  Spesialisasi: Web Dev · Mobile · UI/UX' },
+                { cls:'output', text: '  Lokasi: Kota Malang, Jawa Timur' },
                 { cls:'output', text: '  Status: Tersedia untuk proyek freelance' },
                 { cls:'muted',  text: '' }
             ],
             skills: () => [
                 { cls:'accent',  text: '> Tech Stack:' },
-                { cls:'success', text: '  Frontend  → HTML · CSS · JavaScript · React · Next.js · Tailwind' },
-                { cls:'success', text: '  Backend   → Node.js · Express · Laravel · PHP' },
-                { cls:'success', text: '  Database  → MySQL · MongoDB · PostgreSQL · Firebase' },
-                { cls:'success', text: '  Mobile    → Flutter · React Native' },
-                { cls:'success', text: '  Tools     → Git · Docker · Figma · VS Code' },
+                { cls:'success', text: '  Frontend  → HTML · CSS · JavaScript · TypeScript · React · Next.js · Tailwind' },
+                { cls:'success', text: '  Mobile    → Flutter · Dart' },
+                { cls:'success', text: '  Backend   → MySQL · Supabase · REST API · Vercel' },
+                { cls:'success', text: '  Tools     → Git · Postman · Figma · Framer Motion · QR Scanner' },
+                { cls:'success', text: '  UI/UX     → Wireframing · Prototyping · User Flow · Whimsical' },
                 { cls:'muted',   text: '' }
             ],
             projects: () => [
                 { cls:'accent',  text: '> Proyek Unggulan:' },
-                { cls:'output',  text: '  [0] Portofolio Pribadi      — HTML · CSS · JS · Three.js' },
-                { cls:'output',  text: '  [1] Dashboard SITU          — React · Node · MongoDB' },
-                { cls:'output',  text: '  [2] Sistem Kunjungan Sekolah — Next.js · Express · MySQL' },
-                { cls:'muted',   text: '  ketik project 0/1/2 untuk detail' },
+                { cls:'output',  text: '  [0] EazyChise (Web Marketplace)     — Next.js · Supabase · Vercel' },
+                { cls:'output',  text: '  [1] Monsef (Mobile Keuangan)        — Flutter · OCR · Speech-to-Text' },
+                { cls:'output',  text: '  [2] HaloAir (PDAM Mobile App)       — Flutter · REST API' },
+                { cls:'output',  text: '  [3] PortaTrip (UI/UX Design)        — Figma · Whimsical' },
+                { cls:'muted',   text: '  ketik project 0/1/2/3 untuk detail' },
                 { cls:'muted',   text: '' }
             ],
             contact: () => [
@@ -785,6 +804,7 @@ document.addEventListener("DOMContentLoaded", function () {
             social: () => [
                 { cls:'accent',  text: '> Social Media:' },
                 { cls:'output',  text: '  GitHub    → github.com/elzidane' },
+                { cls:'output',  text: '  LinkedIn  → linkedin.com/in/elzidane' },
                 { cls:'output',  text: '  Instagram → instagram.com/_elzdne' },
                 { cls:'muted',   text: '' }
             ],
@@ -832,7 +852,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const lowerCmd = cmd.toLowerCase();
 
             // Match project detail shortcut
-            if (/^project [012]$/.test(lowerCmd)) {
+            if (/^project [0123]$/.test(lowerCmd)) {
                 const idx = +lowerCmd.split(' ')[1];
                 const cards = document.querySelectorAll('.project-card[data-modal-id]');
                 if (cards[idx]) {
@@ -1108,10 +1128,10 @@ document.addEventListener("DOMContentLoaded", function () {
         window.skillsChart = new Chart(chartCanvas, {
             type: 'radar',
             data: {
-                labels: ['Frontend', 'Backend', 'Mobile Dev', 'UI/UX Design', 'Database', 'Git / Tools'],
+                labels: ['Frontend', 'Mobile Dev', 'UI/UX Design', 'Backend/Cloud', 'Database', 'Git / Tools'],
                 datasets: [{
                     label: 'Tingkat Penguasaan',
-                    data: [85, 70, 90, 80, 75, 85],
+                    data: [88, 90, 85, 75, 78, 85],
                     backgroundColor: 'rgba(91, 127, 255, 0.12)',
                     borderColor: '#5b7fff',
                     pointBackgroundColor: '#00e5c3',
