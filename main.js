@@ -137,10 +137,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const cvBtn = document.getElementById('btn-cv');
     if (cvBtn) {
         cvBtn.addEventListener('click', () => {
-            window.showNotif('Membuka CV ATS... 📄', 'success');
-            setTimeout(() => {
-                window.open('cv.html', '_blank');
-            }, 800);
+            window.showNotif('Mengunduh CV... 📄', 'success');
+            const link = document.createElement('a');
+            link.href = 'asset/CV_ATS_EL_ZIDANE_ARDYANSYAH (1).pdf';
+            link.download = 'CV_EL_Zidane_Ardyansyah.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
     }
 
