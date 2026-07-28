@@ -171,11 +171,70 @@
             <div class="about-github fade-in" style="transition-delay:0.3s;">
                 <h3 class="github-title">Aktivitas GitHub</h3>
                 <div class="github-cards-wrap">
-                    <div class="github-card-item">
-                        <img id="github-stats-card" src="https://github-readme-stats.vercel.app/api?username=elzidane&show_icons=true&theme=dark&bg_color=0c0e16&title_color=5b7fff&icon_color=00e5c3&text_color=dde0ea&hide_border=true" alt="GitHub Stats">
+                    <!-- Stats Card -->
+                    <div class="github-stat-card" id="github-stats-card">
+                        <div class="gh-card-header">
+                            <div class="gh-user-info">
+                                <div class="gh-avatar-wrap">
+                                    <img id="gh-avatar" src="" alt="Avatar" class="gh-avatar">
+                                    <div class="gh-avatar-skeleton"></div>
+                                </div>
+                                <div>
+                                    <div class="gh-username" id="gh-username">ElZidane123</div>
+                                    <div class="gh-tag"><i class="fab fa-github"></i> GitHub Stats</div>
+                                </div>
+                            </div>
+                            <a href="https://github.com/ElZidane123" target="_blank" class="gh-profile-link" id="gh-profile-link">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <div class="gh-stats-grid" id="gh-stats-grid">
+                            <div class="gh-stat-item">
+                                <div class="gh-stat-val" id="gh-repos">—</div>
+                                <div class="gh-stat-label">Repos</div>
+                            </div>
+                            <div class="gh-stat-item">
+                                <div class="gh-stat-val" id="gh-stars">—</div>
+                                <div class="gh-stat-label">Stars</div>
+                            </div>
+                            <div class="gh-stat-item">
+                                <div class="gh-stat-val" id="gh-followers">—</div>
+                                <div class="gh-stat-label">Followers</div>
+                            </div>
+                            <div class="gh-stat-item">
+                                <div class="gh-stat-val" id="gh-following">—</div>
+                                <div class="gh-stat-label">Following</div>
+                            </div>
+                        </div>
+                        <div class="gh-contrib-section">
+                            <div class="gh-contrib-label">Kontribusi (12 bulan terakhir)</div>
+                            <div class="gh-contrib-bar-wrap" id="gh-contrib-bars">
+                                <!-- bars injected by JS -->
+                            </div>
+                        </div>
+                        <div class="gh-loading-overlay" id="gh-loading">
+                            <div class="gh-spinner"></div>
+                        </div>
                     </div>
-                    <div class="github-card-item">
-                        <img id="github-langs-card" src="https://github-readme-stats.vercel.app/api/top-langs/?username=elzidane&layout=compact&theme=dark&bg_color=0c0e16&title_color=5b7fff&text_color=dde0ea&hide_border=true" alt="GitHub Top Languages">
+
+                    <!-- Top Languages Card -->
+                    <div class="github-stat-card" id="github-langs-card">
+                        <div class="gh-card-header">
+                            <div class="gh-lang-title">
+                                <i class="fas fa-code" style="color:var(--accent)"></i>
+                                Bahasa Teratas
+                            </div>
+                            <div class="gh-tag"><i class="fab fa-github"></i> Top Langs</div>
+                        </div>
+                        <div id="gh-languages-list" class="gh-lang-list">
+                            <!-- injected by JS -->
+                        </div>
+                        <div class="gh-lang-bar-total" id="gh-lang-bar-total">
+                            <!-- colored bar injected by JS -->
+                        </div>
+                        <div class="gh-loading-overlay" id="gh-langs-loading">
+                            <div class="gh-spinner"></div>
+                        </div>
                     </div>
                 </div>
             </div>

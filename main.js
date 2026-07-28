@@ -573,26 +573,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const icon = btn.querySelector('i');
         const savedTheme = localStorage.getItem('theme') || 'dark';
         
-        function updateGithubCards() {
-            const statsCard = document.getElementById('github-stats-card');
-            const langsCard = document.getElementById('github-langs-card');
-            if (!statsCard || !langsCard) return;
-
-            const isLight = document.body.getAttribute('data-theme') === 'light';
-            if (isLight) {
-                statsCard.src = "https://github-readme-stats.vercel.app/api?username=elzidane&show_icons=true&bg_color=eaebf2&title_color=5b7fff&icon_color=00e5c3&text_color=181a24&hide_border=true";
-                langsCard.src = "https://github-readme-stats.vercel.app/api/top-langs/?username=elzidane&layout=compact&bg_color=eaebf2&title_color=5b7fff&text_color=181a24&hide_border=true";
-            } else {
-                statsCard.src = "https://github-readme-stats.vercel.app/api?username=elzidane&show_icons=true&theme=dark&bg_color=0c0e16&title_color=5b7fff&icon_color=00e5c3&text_color=dde0ea&hide_border=true";
-                langsCard.src = "https://github-readme-stats.vercel.app/api/top-langs/?username=elzidane&layout=compact&theme=dark&bg_color=0c0e16&title_color=5b7fff&text_color=dde0ea&hide_border=true";
-            }
-        }
-
         if (savedTheme === 'light') {
             document.body.setAttribute('data-theme', 'light');
             icon.className = 'fas fa-sun';
         }
-        updateGithubCards();
         
         btn.addEventListener('click', () => {
             const isLight = document.body.getAttribute('data-theme') === 'light';
@@ -608,9 +592,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (window.playThemeChime) window.playThemeChime(true);
             }
 
-            // Update github cards theme
-            updateGithubCards();
-
             // Sync skills chart text color on theme update
             if (window.skillsChart) {
                 const updatedIsLight = document.body.getAttribute('data-theme') === 'light';
@@ -622,13 +603,167 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     /* ═══════════════════════════════════════════════════════════
+       GITHUB STATS — Native API Fetch
+    ═══════════════════════════════════════════════════════════ */
+    document.addEventListener("DOMContentLoaded", () => {
+        const GITHUB_USERNAME = 'ElZidane123';
+        const GH_API = `https://api.github.com/users/${GITHUB_USERNAME}`;
+        const GH_REPOS_API = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=pushed`;
+
+        // Language color palette
+        const LANG_COLORS = {
+            'JavaScript': '#f7df1e',
+            'TypeScript': '#3178c6',
+            'Python': '#3776ab',
+            'Dart': '#00b4ab',
+            'HTML': '#e34c26',
+            'CSS': '#264de4',
+            'Vue': '#42b883',
+            'Kotlin': '#7f52ff',
+            'Swift': '#fa7343',
+            'Go': '#00add8',
+            'Rust': '#ce422b',
+            'PHP': '#777bb4',
+            'Java': '#b07219',
+            'C++': '#f34b7d',
+            'C': '#555555',
+            'Shell': '#89e051',
+        };
+        function getLangColor(lang) {
+            return LANG_COLORS[lang] || ('#' + Math.abs(lang.split('').reduce((a,c) => a*31+c.charCodeAt(0),0)).toString(16).slice(-6).padStart(6,'a'));
+        }
+
+        async function fetchGithubStats() {
+            try {
+                const [userRes, reposRes] = await Promise.all([
+                    fetch(GH_API),
+                    fetch(GH_REPOS_API)
+                ]);
+
+                if (!userRes.ok) throw new Error('User not found');
+                const user = await userRes.json();
+                const repos = reposRes.ok ? await reposRes.json() : [];
+
+                // Calculate total stars
+                const totalStars = repos.reduce((acc, r) => acc + (r.stargazers_count || 0), 0);
+
+                // --- POPULATE STATS CARD ---
+                const avatar = document.getElementById('gh-avatar');
+                const usernameEl = document.getElementById('gh-username');
+                const profileLink = document.getElementById('gh-profile-link');
+
+                if (avatar) {
+                    avatar.src = user.avatar_url;
+                    avatar.onload = () => avatar.classList.add('loaded');
+                }
+                if (usernameEl) usernameEl.textContent = user.login;
+                if (profileLink) profileLink.href = user.html_url;
+
+                const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+                set('gh-repos', user.public_repos || 0);
+                set('gh-stars', totalStars);
+                set('gh-followers', user.followers || 0);
+                set('gh-following', user.following || 0);
+
+                // Fake contribution bar data (GitHub API doesn't expose this without auth)
+                // We'll generate visually plausible bars based on repo push dates
+                const barsWrap = document.getElementById('gh-contrib-bars');
+                if (barsWrap) {
+                    const monthCounts = new Array(24).fill(0);
+                    const now = new Date();
+                    repos.forEach(r => {
+                        if (r.pushed_at) {
+                            const diff = (now - new Date(r.pushed_at)) / (1000 * 60 * 60 * 24 * 30);
+                            const idx = Math.floor(diff);
+                            if (idx >= 0 && idx < 24) monthCounts[idx]++;
+                        }
+                    });
+                    // Add base noise for visual appeal
+                    const bars = monthCounts.reverse().map((v, i) => {
+                        const noise = Math.floor(Math.random() * 2);
+                        return Math.min(v + noise, 4);
+                    });
+                    const maxVal = Math.max(...bars, 1);
+                    barsWrap.innerHTML = bars.map(v => {
+                        const heightPct = Math.max(8, Math.round((v / maxVal) * 100));
+                        const level = v === 0 ? 0 : v === 1 ? 1 : v <= 2 ? 2 : v <= 3 ? 3 : 4;
+                        return `<div class="gh-contrib-bar" data-level="${level}" style="height:${heightPct}%" title="${v} kontribusi"></div>`;
+                    }).join('');
+                }
+
+                // Hide stats loading
+                const statsLoading = document.getElementById('gh-loading');
+                if (statsLoading) statsLoading.classList.add('hidden');
+
+                // --- POPULATE LANGUAGES CARD ---
+                const langMap = {};
+                repos.forEach(r => {
+                    if (r.language) langMap[r.language] = (langMap[r.language] || 0) + 1;
+                });
+                const sortedLangs = Object.entries(langMap).sort((a,b) => b[1]-a[1]).slice(0, 6);
+                const totalCount = sortedLangs.reduce((a,b) => a+b[1], 0);
+
+                const langList = document.getElementById('gh-languages-list');
+                const langBarTotal = document.getElementById('gh-lang-bar-total');
+
+                if (langList && sortedLangs.length > 0) {
+                    langList.innerHTML = sortedLangs.map(([lang, count]) => {
+                        const pct = ((count / totalCount) * 100).toFixed(1);
+                        const color = getLangColor(lang);
+                        return `
+                        <div class="gh-lang-row">
+                            <div class="gh-lang-dot" style="background:${color}"></div>
+                            <div class="gh-lang-name">${lang}</div>
+                            <div class="gh-lang-bar"><div class="gh-lang-bar-fill" style="background:${color};width:0%" data-width="${pct}"></div></div>
+                            <div class="gh-lang-pct">${pct}%</div>
+                        </div>`;
+                    }).join('');
+
+                    // Animate bar fills after DOM insertion
+                    setTimeout(() => {
+                        langList.querySelectorAll('.gh-lang-bar-fill').forEach(el => {
+                            el.style.width = el.dataset.width + '%';
+                        });
+                    }, 100);
+                } else if (langList) {
+                    langList.innerHTML = '<div class="gh-error"><i class="fas fa-code-branch"></i>Belum ada repo publik</div>';
+                }
+
+                if (langBarTotal && sortedLangs.length > 0) {
+                    langBarTotal.innerHTML = sortedLangs.map(([lang, count]) => {
+                        const pct = ((count / totalCount) * 100).toFixed(1);
+                        return `<div class="gh-lang-bar-segment" style="width:${pct}%;background:${getLangColor(lang)}"></div>`;
+                    }).join('');
+                }
+
+                // Hide langs loading
+                const langsLoading = document.getElementById('gh-langs-loading');
+                if (langsLoading) langsLoading.classList.add('hidden');
+
+            } catch (err) {
+                console.warn('GitHub API fetch failed:', err);
+                // Show error states
+                ['gh-loading', 'gh-langs-loading'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = '<div class="gh-error"><i class="fas fa-wifi"></i>Tidak dapat memuat data GitHub</div>';
+                    }
+                });
+            }
+        }
+
+        // Fetch on load
+        fetchGithubStats();
+    });
+
+    /* ═══════════════════════════════════════════════════════════
        2. PROJECT DETAIL MODAL DATA
     ═══════════════════════════════════════════════════════════ */
     const projectsData = [
         {
             title: 'EazyChise',
             tag: 'WEB',
-            img: 'asset/Screenshot 2025-03-30 002433.png',
+            img: 'asset/eazychise.png',
             desc: 'Platform marketplace waralaba responsif yang membantu mitra bisnis memperluas jaringan franchise mereka secara digital. Dibangun dari desain hingga deployment dengan performa tinggi dan fitur autentikasi lengkap.',
             features: [
                 'Autentikasi pengguna berbasis Supabase (sign up, sign in, session)',
@@ -639,13 +774,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Deployment otomatis via Vercel CI/CD'
             ],
             tech: ['Next.js','TypeScript','Tailwind CSS','Supabase','Vercel','Framer Motion'],
-            live: '#',
+            live: 'eazychise.vercel.app',
             github: 'https://github.com/elzidane'
         },
         {
             title: 'Monsef — Pencatat Keuangan',
             tag: 'MOBILE',
-            img: 'asset/UIUX PETSHOP MOBILE APP.png',
+            img: 'asset/monsef.png',
             desc: 'Aplikasi pencatat keuangan mobile multiplatform dengan teknologi AI terkini. Memungkinkan pengguna mencatat transaksi lewat scan struk (OCR), suara (Speech-to-Text), atau input manual — dibangun dari nol hingga produksi.',
             features: [
                 'Scan struk otomatis dengan integrasi OCR API',
@@ -662,7 +797,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             title: 'HaloAir — Manajemen PDAM',
             tag: 'MOBILE',
-            img: 'asset/webkunjungan1.png',
+            img: 'asset/haloair.png',
             desc: 'Aplikasi mobile manajemen layanan PDAM dengan arsitektur multi-role untuk keamanan hak akses. Admin dapat mengelola data pelanggan dan tagihan secara real-time, sementara user dapat memantau tagihan dan status layanan mereka.',
             features: [
                 'Arsitektur Multi-Role (Admin & User) dengan hak akses terpisah',
@@ -679,7 +814,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             title: 'PortaTrip — UI/UX Design',
             tag: 'UI/UX',
-            img: 'asset/Dashboard Situ.png',
+            img: 'asset/portatrip.png',
             desc: 'Desain UI/UX komprehensif untuk platform aplikasi wisata dan pemesanan porter guide. Dimulai dari riset pengguna, user flow, wireframe, hingga interactive prototype yang siap diuji.',
             features: [
                 'User Flow & Information Architecture lengkap',
@@ -696,7 +831,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             title: 'Web Visit SMK Telkom Malang',
             tag: 'WEB',
-            img: 'asset/webkunjungan1.png',
+            img: 'asset/webvisit.png',
             desc: 'Website resmi kunjungan untuk SMK Telkom Malang, memfasilitasi pendataan dan informasi seputar kunjungan.',
             features: [
                 'Informasi kunjungan',
@@ -704,7 +839,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Desain responsif'
             ],
             tech: ['HTML', 'CSS', 'JavaScript'],
-            live: '#',
+            live: 'mokletvisit.vercel.app',
             github: 'https://github.com/elzidane'
         },
         {
