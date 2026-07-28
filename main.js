@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", function () {
        GITHUB STATS — Native API Fetch
     ═══════════════════════════════════════════════════════════ */
     document.addEventListener("DOMContentLoaded", () => {
-        const GITHUB_USERNAME = 'ElZidane123';
+        const GITHUB_USERNAME = 'elzidanee';
         const GH_API = `https://api.github.com/users/${GITHUB_USERNAME}`;
         const GH_REPOS_API = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=pushed`;
 
