@@ -692,6 +692,76 @@ document.addEventListener("DOMContentLoaded", function () {
             tech: ['Figma','Whimsical','UI/UX Design','Prototyping','User Research'],
             live: '#',
             github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Web Visit SMK Telkom Malang',
+            tag: 'WEB',
+            img: 'asset/webkunjungan1.png',
+            desc: 'Website resmi kunjungan untuk SMK Telkom Malang, memfasilitasi pendataan dan informasi seputar kunjungan.',
+            features: [
+                'Informasi kunjungan',
+                'Pendataan pengunjung',
+                'Desain responsif'
+            ],
+            tech: ['HTML', 'CSS', 'JavaScript'],
+            live: '#',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Aplikasi Mobile Eazychise',
+            tag: 'MOBILE',
+            img: 'asset/monsef.png',
+            desc: 'Platform marketplace waralaba versi aplikasi mobile, memudahkan pengguna mencari dan bertransaksi franchise di mana saja.',
+            features: [
+                'Pencarian franchise',
+                'Transaksi aman',
+                'Mobile optimized'
+            ],
+            tech: ['Flutter', 'Dart'],
+            live: '#',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Aplikasi Toko Online',
+            tag: 'WEB/MOBILE',
+            img: 'asset/port.png',
+            desc: 'Aplikasi toko online komprehensif untuk transaksi produk fisik dan digital secara mudah dan aman.',
+            features: [
+                'Katalog produk',
+                'Keranjang belanja',
+                'Pembayaran digital'
+            ],
+            tech: ['Fullstack', 'E-Commerce'],
+            live: '#',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Aplikasi EcoGuard',
+            tag: 'APP',
+            img: 'asset/port.png',
+            desc: 'Aplikasi berfokus pada pelestarian lingkungan dan edukasi masyarakat melalui fitur-fitur interaktif EcoGuard.',
+            features: [
+                'Edukasi lingkungan',
+                'Laporan kegiatan',
+                'Gamifikasi peduli lingkungan'
+            ],
+            tech: ['Tech Stack'],
+            live: '#',
+            github: 'https://github.com/elzidane'
+        },
+        {
+            title: 'Website Mokleters',
+            tag: 'WEB',
+            img: 'asset/port.png',
+            desc: 'Website resmi untuk komunitas Mokleters yang interaktif dan dinamis, memudahkan penyebaran informasi kegiatan.',
+            features: [
+                'Portal komunitas',
+                'Manajemen event',
+                'Forum diskusi'
+            ],
+            tech: ['Web Dev', 'Community Platform'],
+            live: '#',
+            github: 'https://github.com/elzidane'
         }
     ];
 
@@ -794,7 +864,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 { cls:'output',  text: '  [1] Monsef (Mobile Keuangan)        — Flutter · OCR · Speech-to-Text' },
                 { cls:'output',  text: '  [2] HaloAir (PDAM Mobile App)       — Flutter · REST API' },
                 { cls:'output',  text: '  [3] PortaTrip (UI/UX Design)        — Figma · Whimsical' },
-                { cls:'muted',   text: '  ketik project 0/1/2/3 untuk detail' },
+                { cls:'output',  text: '  [4] Web Visit SMK Telkom            — HTML · CSS · JS' },
+                { cls:'output',  text: '  [5] Mobile Eazychise                — Flutter · Dart' },
+                { cls:'output',  text: '  [6] Aplikasi Toko Online            — Fullstack' },
+                { cls:'output',  text: '  [7] Aplikasi EcoGuard               — Tech Stack' },
+                { cls:'output',  text: '  [8] Website Mokleters               — Web Dev' },
+                { cls:'muted',   text: '  ketik project 0-8 untuk detail' },
                 { cls:'muted',   text: '' }
             ],
             contact: () => [
@@ -855,7 +930,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const lowerCmd = cmd.toLowerCase();
 
             // Match project detail shortcut
-            if (/^project [0123]$/.test(lowerCmd)) {
+            if (/^project [0-8]$/.test(lowerCmd)) {
                 const idx = +lowerCmd.split(' ')[1];
                 const cards = document.querySelectorAll('.project-card[data-modal-id]');
                 if (cards[idx]) {
