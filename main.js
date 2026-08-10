@@ -774,7 +774,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Deployment otomatis via Vercel CI/CD'
             ],
             tech: ['Next.js','TypeScript','Tailwind CSS','Supabase','Vercel','Framer Motion'],
-            live: 'eazychise.vercel.app',
+            live: 'https://eazychise.vercel.app',
             github: 'https://github.com/elzidane'
         },
         {
@@ -839,7 +839,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Desain responsif'
             ],
             tech: ['HTML', 'CSS', 'JavaScript'],
-            live: 'mokletvisit.vercel.app',
+            live: 'https://mokletvisit.vercel.app',
             github: 'https://github.com/elzidane'
         },
         {
@@ -867,7 +867,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Pembayaran digital'
             ],
             tech: ['Fullstack', 'E-Commerce'],
-            live: '#',
+            live: 'https://mokletvisit.vercel.app',
             github: 'https://github.com/elzidane'
         },
         {
