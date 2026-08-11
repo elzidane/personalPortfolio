@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cvBtn.addEventListener('click', () => {
             window.showNotif('Mengunduh CV... 📄', 'success');
             const link = document.createElement('a');
-            link.href = 'asset/CV_ATS_EL_ZIDANE_ARDYANSYAH (1).pdf';
+            link.href = 'asset/CV_ATS_EL_ZIDANE_ARDYANSYAH.pdf';
             link.download = 'CV_EL_Zidane_Ardyansyah.pdf';
             document.body.appendChild(link);
             link.click();
